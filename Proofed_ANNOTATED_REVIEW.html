@@ -1,0 +1,170 @@
+<meta charset="utf-8">
+<title>Proofed.dev — Annotated Critical Review</title>
+<style>
+  @page { margin: 18mm 16mm; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: #111; max-width: 820px; margin: 0 auto; padding: 24px; line-height: 1.5; font-size: 14px; }
+  h1 { font-size: 24px; letter-spacing: 1px; }
+  h2 { font-size: 18px; margin-top: 34px; border-bottom: 2px solid #111; padding-bottom: 4px; }
+  h3 { font-size: 15px; margin-top: 22px; }
+  ul { margin: 6px 0 12px 0; }
+  li { margin: 2px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; margin: 10px 0; }
+  th, td { border: 1px solid #999; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #efefef; }
+  .critique { color: #C0392B; }
+  .addition { color: #1A5BA6; }
+  .critique .tag, .addition .tag { font-weight: bold; font-size: 11px; letter-spacing: 0.5px; }
+  .box { border-left: 4px solid; padding: 8px 12px; margin: 10px 0; background: #fafafa; }
+  .critique.box { border-color: #C0392B; }
+  .addition.box { border-color: #1A5BA6; }
+  .legend { border: 1px solid #999; padding: 10px 14px; background: #f7f7f7; font-size: 12.5px; margin-bottom: 24px; }
+  .addition table th { background: #E8F0FA; }
+  .addition table, .addition th, .addition td { border-color: #1A5BA6; color: #1A5BA6; }
+  .pagebreak { page-break-before: always; }
+  blockquote { border-left: 3px solid #ccc; margin: 8px 0; padding: 4px 12px; color: #333; font-style: italic; }
+</style>
+
+<h1>PROOFED.DEV</h1>
+<p><em>Annotated critical review — product, market, and business model &middot; July 2026</em></p>
+
+<div class="legend">
+  <b>How to read this document:</b> the product as it exists today (reconstructed from the live site) is described in <b>black</b>.
+  <span class="critique"><b>Red text is critical review</b> — problems, risks, and challenged assumptions.</span>
+  <span class="addition"><b>Blue text is recommended additions and changes</b> — repositioning, competitor analysis, and strategy.</span>
+</div>
+
+<h2>1. THE PRODUCT AS IT STANDS</h2>
+<p><b>Positioning / hero:</b></p>
+<blockquote>"Detect Crypto [Scams] Before It's Too Late." — "Paste any token address and get an instant risk report covering honeypot detection, deployer history, liquidity analysis, and more." — "Stop guessing. Start knowing."</blockquote>
+
+<p><b>Headline stats:</b> 80+ Onchain Signals &middot; 100% Live Data &middot; 7 EVM Chains</p>
+
+<p><b>Feature set:</b></p>
+<ul>
+  <li><b>Honeypot Detection</b> — "Identify buy-only contracts and exit scams before you invest."</li>
+  <li><b>Contract Risk Scoring</b> — "Comprehensive risk score from 0–100 based on 80+ onchain signals."</li>
+  <li><b>Liquidity Analysis</b> — "Detect thin liquidity pools, locked LP, and rug-pull indicators."</li>
+  <li><b>Top Holder Tracking</b> — "See token distribution, whale concentration, and insider wallets."</li>
+  <li><b>Deployer History</b> — "Trace deployer wallet for prior scams, rugpulls, and patterns."</li>
+  <li><b>Real-Time Analysis</b> — "Live onchain data, no delayed risk signals."</li>
+  <li><b>Public Sentiment</b> — X/Twitter scan for expert mentions, crowd warnings, quality replies.</li>
+</ul>
+
+<p><b>Channels:</b> web app (paste an ERC-20 address) &middot; browser extension ("Inline on Uniswap, Etherscan, Dexscreener" — "Risk card before you sign") &middot; Telegram bot (<code>/scan &lt;address&gt;</code>).</p>
+
+<p><b>Pricing:</b> Free — $0, 20 token scans per week. Pro — $20/month, 200 token scans per week ("10× the quota").</p>
+
+<p><b>Status:</b> soft launch, with an honest disclaimer: "Our risk analysis is experimental… Please don't rely on it for trading decisions as it's still very early right now and in active development."</p>
+
+<div class="critique box">
+  <span class="tag">CRITIQUE — First impressions of the surface itself.</span>
+  <ul class="critique">
+    <li><b>The site is invisible to search engines and link previews.</b> It's a client-rendered React SPA whose HTML contains literally one word ("Proofed"). No server rendering, no meta description, no OpenGraph tags. For a product acquired through Twitter/Telegram link-sharing and "is X token safe" searches, shipping zero crawlable content is a self-inflicted wound. Fix with SSR/prerendering before spending anything on marketing.</li>
+    <li><b>The name collides.</b> "Proofed" is an established proofreading company (proofed.com) that owns the SEO for the word, and <code>.dev</code> signals developer-tools, not trading. Traders won't remember whether it's proofed.dev/.app/.io. Consider a crypto-native name you can own outright.</li>
+    <li><b>"100% Live Data" is a filler stat.</b> It claims nothing falsifiable, and the product's own error strings admit otherwise ("Some data sources were unavailable… Most data sources were unavailable… All data sources were unavailable"). Replace it with a number that builds trust — e.g., verified rug-pulls flagged before they happened.</li>
+    <li><b>The disclaimer and the pitch cancel each other out.</b> The hero sells certainty ("Stop guessing. Start knowing."); the onboarding modal says "don't rely on it for trading decisions." Honest, and correct for a soft launch — but it means the product currently asks $20/month for something its own authors say not to rely on. Until the accuracy story is provable, the paid tier is premature (more below).</li>
+  </ul>
+</div>
+
+<h2 class="pagebreak">2. COMPETITIVE LANDSCAPE <span class="addition">(the uncomfortable part)</span></h2>
+
+<div class="critique box">
+  <span class="tag">CRITIQUE — The core product is free, everywhere, and has been for years.</span>
+  Token risk scanning is one of the most commoditized categories in crypto. Experienced traders' standard workflow is to <i>stack several free scanners at once</i> — precisely because they all cost nothing. Every headline feature on the landing page (honeypot check, LP analysis, holder concentration, deployer history, 0–100 score) is available free from multiple incumbents with years of brand trust. A $20/month subscription is competing against $0 with switching costs of zero and a paste-an-address interface identical to everyone else's.
+</div>
+
+<div class="addition box">
+  <span class="tag">ADDITION — Competitor map (absent from the site; investors and users will build it for you if you don't).</span>
+  <table>
+    <tr><th>Competitor</th><th>What they do</th><th>Threat level</th></tr>
+    <tr><td><b>Token Sniffer</b> (Solidus Labs)</td><td>The brand-name scanner traders actually say out loud; swap-simulation honeypot test, contract-similarity database, institutional backing. Free.</td><td><b>Highest (brand).</b> You are fighting the generic verb for this action.</td></tr>
+    <tr><td><b>GoPlus Security</b></td><td>Free token-security API + site; the data layer <i>behind</i> many other scanners, bots, and wallets. Free/open.</td><td><b>Highest (infrastructure).</b> If Proofed's signals substantially overlap GoPlus's free API, there is no data moat — and users will assume it's a wrapper even if it isn't. Publish what is proprietary.</td></tr>
+    <tr><td><b>Honeypot.is</b></td><td>The default direct honeypot simulator. Free.</td><td>High for the single most-marketed feature.</td></tr>
+    <tr><td><b>RugCheck.xyz</b></td><td>"The Solana traffic light" — dominant on the chain where the memecoin volume actually is. Free.</td><td>High — owns the market Proofed hasn't entered (see chain critique below).</td></tr>
+    <tr><td><b>Quick Intel, De.Fi, Bubblemaps, DEXTools/Dexscreener built-in audits</b></td><td>Supplementary scans, holder-bubble visualizations, and — critically — risk scores <i>already embedded in the screeners traders live in</i>.</td><td>High — Dexscreener showing an audit badge natively removes the reason to alt-tab to Proofed.</td></tr>
+    <tr><td><b>Wallet-native security: MetaMask×Blockaid, Rabby, Phantom</b></td><td>Transaction simulation and scam alerts on by default at the moment of signing — MetaMask ships Blockaid alerts as the default for extension and mobile users.</td><td><b>Structural.</b> The "risk card before you sign" extension concept is being absorbed into the wallet layer for free — the same dynamic as a platform absorbing your feature, and Blockaid is venture-funded infrastructure you can't outspend.</td></tr>
+    <tr><td><b>Trading bots (Maestro, Banana Gun, Trojan, etc.)</b></td><td>The high-volume degen's actual interface; safety checks (honeypot, tax, LP) are bundled into the bot they already pay per-trade fees to.</td><td>High — this is exactly the 200-scans-a-week user the Pro tier targets, already served inside their execution tool.</td></tr>
+    <tr><td><b>Scam Sniffer, Wallet Guard (Consensys), Pocket Universe</b></td><td>Security extensions; several already acquired or absorbed by wallet companies.</td><td>Moderate — but note the pattern: consumer crypto-security tools historically <i>exit to wallets</i>, they don't become standalone subscription businesses.</td></tr>
+  </table>
+  <p class="addition"><b>Net read:</b> the scan itself is a commodity; distribution (being inside the wallet, the screener, or the bot) is the scarce asset. Every successful player in this category either owns distribution, sells B2B infrastructure (Blockaid, GoPlus, Webacy), or is free and monetizes elsewhere. Nobody has built a durable consumer subscription on token scanning — that is not an accident.</p>
+</div>
+
+<h2 class="pagebreak">3. STRATEGY CRITIQUE</h2>
+
+<div class="critique box">
+  <span class="tag">CRITIQUE — Wrong chains for the problem being solved.</span>
+  Proofed is ERC-20 / EVM-only (7 chains). But since 2024 the epicenter of new-token launches, rugs, and scan demand has been <b>Solana</b> (pump.fun and its descendants), with <b>Base</b> second. The audience with a daily, high-frequency "is this a rug?" problem is disproportionately on the chains Proofed doesn't cover, while the EVM long tail is where incumbent free scanners are most entrenched. "7 EVM chains" is breadth in the wrong direction — depth on the two chains where tokens launch by the thousand per day would be worth more than fourteen EVM chains.
+</div>
+
+<div class="critique box">
+  <span class="tag">CRITIQUE — The subscription is mismatched to how the product is used.</span>
+  <ul class="critique">
+    <li><b>Scanning is episodic; subscriptions need habits.</b> A casual trader scans in bursts around market mania and disappears for months. 20 free scans/week is more than most casual users will ever use — so the free tier never creates upgrade pressure, it just serves them fully.</li>
+    <li><b>The user who needs 200 scans/week is the user least likely to pay you.</b> High-frequency degens already have safety checks bundled in their trading bots and screeners, and they optimize for speed — an alt-tab to a separate web app loses to an inline badge every time.</li>
+    <li><b>$20/month is priced against $0 with no accuracy proof.</b> Worse: the soft-launch disclaimer explicitly tells users not to rely on the output. Pay-for-quota only works when quota is scarce and the output is trusted; today neither holds.</li>
+    <li><b>Metered scans also cap virality.</b> Every scan result shared in a Telegram group is your best ad; a quota tells users to ration exactly the behavior you want them to maximize.</li>
+  </ul>
+</div>
+
+<div class="critique box">
+  <span class="tag">CRITIQUE — Accuracy is an adversarial, existential problem — and it's currently hand-waved.</span>
+  Scam deployers actively engineer contracts to pass automated checks (time-delayed honeypots, upgradeable proxies, external tax switches, LP pulled post-hype). A static 0–100 score is a target for adversaries to optimize against. The site advertises "80+ signals" but publishes no accuracy data: no backtests against known rugs, no false-positive rate, no post-mortems when a "low-risk" token rugs. One viral screenshot — "Proofed scored it 18/100 and it rugged an hour later" — does more brand damage than a year of marketing repairs, and it is a statistical certainty at scale. The X-sentiment module compounds this: memecoin Twitter is bot-saturated shill traffic (weak, gameable signal), the X API is expensive, and the product's own strings admit it's often unavailable. It adds cost and attack surface for little trustworthy signal.
+</div>
+
+<h2 class="pagebreak">4. RECOMMENDATIONS</h2>
+
+<div class="addition box">
+  <span class="tag">ADDITION — Reposition: from "another scanner" to the two things in this product that are actually defensible.</span>
+  <ul class="addition">
+    <li><b>Double down on Deployer History — it's the best feature in the stack.</b> Honeypot and LP checks are commodities, but a <b>cross-chain deployer reputation graph</b> — wallet clustering, funding-source tracing, "this deployer's last 6 tokens all rugged," serial-scammer fingerprinting across chains — is genuinely hard, compounds with data over time, and none of the free incumbents do it well. This is the moat candidate. Rename the product story around it: not "we scan tokens," but "we remember scammers."</li>
+    <li><b>Shift from scan-on-demand to monitor-what-you-hold.</b> Episodic scanning can't sustain a subscription; <b>continuous portfolio monitoring can</b>: "connect your wallet, and we alert you the moment LP starts unlocking, a whale wallet moves, the deployer funds a new token, or ownership is transferred." Alerts on held positions are recurring value, justify Telegram-native delivery (already built!), and create the retention a $/month price needs.</li>
+  </ul>
+</div>
+
+<div class="addition box">
+  <span class="tag">ADDITION — Revised business model (replaces the $0/$20 quota tiers).</span>
+  <table>
+    <tr><th>Layer</th><th>Model</th><th>Rationale</th></tr>
+    <tr><td><b>Consumer scanning</b></td><td><b>Free and unlimited</b></td><td>Scans are the marketing. Every shared risk card in a Telegram group is distribution. Competing against free with a quota is the worst of both worlds.</td></tr>
+    <tr><td><b>Pro (consumer)</b></td><td>~$10–15/mo: portfolio monitoring + real-time alerts, deployer-graph deep dives, early-launch scoring, API-lite</td><td>Charges for the recurring, differentiated layer, not the commodity check. Price against Telegram alpha-group subs (which degens demonstrably pay for), not against free scanners.</td></tr>
+    <tr><td><b>B2B API (the real business)</b></td><td>Usage-priced risk API for trading bots, Telegram communities, wallets, and screeners</td><td>This is where the category's actual revenue lives (GoPlus, Blockaid, Webacy). One bot integration delivers more scan volume than years of consumer acquisition — and the deployer graph gets better with every query. The consumer app becomes the demo for the API.</td></tr>
+  </table>
+</div>
+
+<div class="addition box">
+  <span class="tag">ADDITION — Credibility program (mandatory before any paid tier).</span>
+  <ul class="addition">
+    <li><b>Publish a public backtest:</b> run the engine against a labeled set of historical rugs and legitimate launches; publish precision/recall. Update monthly.</li>
+    <li><b>Public post-mortems:</b> when a token Proofed scored low-risk rugs, write it up — what was missed, what signal was added. In security products, owning failures builds more trust than claiming perfection.</li>
+    <li><b>A live "caught before the rug" feed:</b> timestamped high-risk calls that later rugged. This is the marketing stat that replaces "100% Live Data."</li>
+    <li><b>Team and method transparency:</b> anonymous teams are normal in crypto, but security tools are held to a higher bar — at minimum publish the scoring methodology and which signals are proprietary vs. sourced (e.g., from public security APIs).</li>
+  </ul>
+</div>
+
+<div class="addition box">
+  <span class="tag">ADDITION — Go-to-market, in priority order.</span>
+  <ul class="addition">
+    <li><b>1. Solana + Base support</b> — go where the launches are; on Solana, differentiate vs. RugCheck with the deployer graph, don't fight it on the checklist scan.</li>
+    <li><b>2. Telegram-first, not web-first</b> — the bot is the right surface for this audience; make bot results beautifully shareable (image cards with score + flags) so every scan advertises the product in group chats.</li>
+    <li><b>3. Integrate into screeners/bots rather than compete with them</b> — a Dexscreener community-tool listing or a bot partnership beats any ad spend.</li>
+    <li><b>4. Fix the SPA SEO problem</b> and publish free evergreen tools ("check if this deployer has rugged before") that rank for high-intent searches.</li>
+    <li><b>5. Extension last</b> — it's the hardest surface (wallets are absorbing it via Blockaid et al.) and Chrome-store trust for a crypto extension is a long grind. It's a nice-to-have, not the wedge.</li>
+  </ul>
+</div>
+
+<div class="addition box">
+  <span class="tag">ADDITION — Risks &amp; honest odds.</span>
+  <table>
+    <tr><th>Risk</th><th>Mitigation</th></tr>
+    <tr><td>Commodity feature set vs. free incumbents</td><td>Deployer graph + monitoring as the differentiators; free unlimited scans remove the reason to compare on price.</td></tr>
+    <tr><td>Wallets/screeners absorb the category</td><td>Become their supplier (B2B API) instead of their competitor — or their acquisition.</td></tr>
+    <tr><td>A high-profile miss destroys trust</td><td>Published backtests, post-mortems, and probabilistic language ("risk factors found," never "safe").</td></tr>
+    <tr><td>Legal/regulatory</td><td>Keep it a research tool: no "buy/don't buy" language, no "safe" verdicts, clear ToS. (For a Canadian founder: a research tool avoids CSA registration questions that "advice" or signals-selling could raise — keep the copy on the research side of that line.)</td></tr>
+    <tr><td>Market-cycle dependence</td><td>Scan demand tracks memecoin mania; B2B API revenue and monitoring subs are the counter-cyclical ballast.</td></tr>
+  </table>
+</div>
+
+<div class="addition box">
+  <span class="tag">ADDITION — Bottom line.</span>
+  Proofed is a competently built product in one of the most commoditized, structurally hostile categories in crypto: the scan is free everywhere, the wallets are absorbing the warning layer, and the heaviest users live inside bots that bundle the same checks. As positioned — a metered $20/month scanner on 7 EVM chains — it is very unlikely to become a business. But inside it are two real assets: the <b>deployer-history graph</b> (the one feature that compounds and that incumbents do badly) and a <b>Telegram-native delivery channel</b> perfectly suited to portfolio monitoring and alerts. The winning shape is: free unlimited scans as distribution, a monitoring/alerting subscription as the consumer revenue, a B2B risk API as the real business, Solana + Base as the market, and a published accuracy record as the trust engine. The soft-launch instinct to gather feedback before charging is right — the current pricing page just charges before the product has earned the right to.
+</div>
