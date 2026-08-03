@@ -1,0 +1,205 @@
+<meta charset="utf-8">
+<title>ONYX Ledger — Canadian Legal Checklist for a Tax-Filing Startup</title>
+<style>
+  @page { margin: 18mm 16mm; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: #111; max-width: 820px; margin: 0 auto; padding: 24px; line-height: 1.5; font-size: 14px; }
+  h1 { font-size: 24px; letter-spacing: 1px; }
+  h2 { font-size: 18px; margin-top: 34px; border-bottom: 2px solid #111; padding-bottom: 4px; }
+  h3 { font-size: 15px; margin-top: 22px; }
+  ul { margin: 6px 0 12px 0; }
+  li { margin: 3px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; margin: 10px 0; }
+  th, td { border: 1px solid #999; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #efefef; }
+  .must { color: #C0392B; font-weight: bold; font-size: 11px; letter-spacing: 0.5px; }
+  .cond { color: #B9770E; font-weight: bold; font-size: 11px; letter-spacing: 0.5px; }
+  .good { color: #1E7A46; font-weight: bold; font-size: 11px; letter-spacing: 0.5px; }
+  .box { border-left: 4px solid #1A5BA6; padding: 8px 12px; margin: 10px 0; background: #fafafa; }
+  .legend { border: 1px solid #999; padding: 10px 14px; background: #f7f7f7; font-size: 12.5px; margin-bottom: 24px; }
+  .verdict { border: 2px solid #111; padding: 12px 16px; background: #f7f7f7; margin: 16px 0; }
+  .pagebreak { page-break-before: always; }
+  .small { font-size: 12px; color: #444; }
+</style>
+
+<h1>CANADIAN LEGAL CHECKLIST</h1>
+<p><em>Everything ONYX Ledger needs to be aware of to launch and operate a tax-filing product in Canada &middot; August 2026</em></p>
+
+<div class="legend">
+  <b>How to read this:</b> each item says <b>what it is</b>, <b>when it applies to you</b>, and <b>what to do</b>, in plain language.
+  Tags: <span class="must">MUST</span> = legally required before or at launch &middot;
+  <span class="cond">CONDITIONAL</span> = required only if you do a specific thing &middot;
+  <span class="good">STRONGLY ADVISED</span> = not strictly law, but expected in this industry and dangerous to skip.
+  <br><b>This document is a roadmap, not legal advice</b> — before launch, have a Canadian tech/privacy lawyer review your setup (budget roughly $5k–$15k for the initial pass).
+</div>
+
+<h2>1. SETTING UP THE COMPANY</h2>
+
+<h3>1.1 Incorporate <span class="must">MUST</span></h3>
+<ul>
+  <li><b>What:</b> Create a corporation so the company — not you personally — carries the legal risk of handling people's tax data.</li>
+  <li><b>Why it matters here:</b> in this business a single mistake (bad advice, data breach) can create large claims. Never run this as a sole proprietorship.</li>
+  <li><b>What to do:</b> Federal incorporation (CBCA) is the usual choice for a startup that will operate across provinces — then register extra-provincially in the provinces where you operate. Cost is small (a few hundred dollars plus legal fees). Get a shareholders' agreement between founders (who owns what, what happens if someone leaves) and make sure every founder and contractor signs an <b>IP assignment</b> so the company owns the code.</li>
+</ul>
+
+<h3>1.2 CRA business accounts <span class="must">MUST</span></h3>
+<ul>
+  <li><b>What:</b> A Business Number (BN), plus program accounts: GST/HST, payroll (once you pay anyone), corporate income tax.</li>
+  <li><b>GST/HST detail:</b> you must register and charge GST/HST once revenue passes $30,000 in four consecutive quarters — but register early anyway; it lets you recover the tax you pay on your own expenses. Note you'll charge different rates by customer province (5%–15%), and Quebec's QST is administered separately by Revenu Québec.</li>
+</ul>
+
+<h3>1.3 Name and trademark <span class="good">STRONGLY ADVISED</span></h3>
+<ul>
+  <li><b>What:</b> A NUANS/name search before incorporating, and a trademark application for "ONYX Ledger" with CIPO.</li>
+  <li><b>Why:</b> trademarks in Canada take ~2+ years to register, so file early. Also check the name doesn't collide with existing financial brands (Onyx is a common fintech name — search before you commit).</li>
+  <li><b>One trap:</b> never use CRA logos, colours, or anything implying government affiliation. Your existing "not affiliated with the CRA" disclaimer is correct — keep it prominent.</li>
+</ul>
+
+<h2>2. PERMISSION TO ACTUALLY FILE TAXES</h2>
+
+<h3>2.1 NETFILE software certification <span class="must">MUST</span> (to let users file for themselves)</h3>
+<ul>
+  <li><b>What:</b> CRA approval of your software, earned by passing their test returns each year. Covered in detail in the pros/cons document.</li>
+  <li><b>Key legal points:</b> you sign a <b>confidentiality agreement with the CRA</b> (to receive draft forms — treat those as strictly secret), you must re-certify <b>every year</b>, and you may only advertise as "NETFILE certified" for the years/products actually certified. Advertising certification you don't have is misleading advertising (see §5).</li>
+</ul>
+
+<h3>2.2 EFILE registration <span class="cond">CONDITIONAL</span></h3>
+<ul>
+  <li><b>What:</b> A separate CRA program for people/companies who file returns <b>on behalf of</b> clients (the way an accountant does), including a suitability screening of the business and its principals.</li>
+  <li><b>When it applies:</b> only if you ever offer "we file it for you" or human-assisted filing. Pure self-serve software (user presses File themselves) needs NETFILE certification, not EFILE.</li>
+</ul>
+
+<h3>2.3 Quebec — Revenu Québec certification <span class="cond">CONDITIONAL</span></h3>
+<ul>
+  <li><b>What:</b> Quebec residents file a second, separate provincial return (TP1) with Revenu Québec, which runs its own software certification.</li>
+  <li><b>When it applies:</b> only if you serve Quebec filers. If you launch rest-of-Canada first, you must clearly say Quebec returns aren't supported — don't let a Quebec user get halfway through.</li>
+</ul>
+
+<h3>2.4 Authorized access to client CRA data <span class="cond">CONDITIONAL</span></h3>
+<ul>
+  <li><b>What:</b> Using CRA Auto-fill My Return or Represent a Client to pull a user's slips requires the user's proper authorization through CRA's own consent flow, and your software must follow CRA's rules for those services.</li>
+  <li><b>What to do:</b> never ask users for their CRA My Account password. Access flows through CRA's official login/authorization only. Storing or replaying CRA credentials would be both a privacy violation and a fast way to get banned.</li>
+</ul>
+
+<h2 class="pagebreak">3. PRIVACY LAW — THE BIGGEST ONGOING OBLIGATION</h2>
+<div class="box">
+  You will hold <b>SINs, incomes, investments, and medical expense data</b>. That is close to the most sensitive commercial data set that exists in Canada. Privacy compliance is not a page on your website; it is a set of ongoing legal duties with real penalties (Quebec's can reach the millions or a % of worldwide revenue).
+</div>
+
+<h3>3.1 PIPEDA — the federal privacy law <span class="must">MUST</span></h3>
+<ul>
+  <li><b>What:</b> Canada's main private-sector privacy law. Applies to you everywhere except (for intra-provincial matters) provinces with their own equivalent laws (Quebec, Alberta, B.C.).</li>
+  <li><b>Your core duties in plain terms:</b>
+    <ul>
+      <li><b>Meaningful consent</b> — tell people clearly what you collect and why, before you collect it. Sensitive data (all of yours) requires express, not implied, consent.</li>
+      <li><b>Collect only what you need</b> — if the CRA can re-fetch a slip, question whether you need to store a copy at all.</li>
+      <li><b>Use it only for the stated purpose</b> — using tax data to market other products, or feeding it to an AI model for training, needs its own separate consent. This is the mistake that would end the company.</li>
+      <li><b>Safeguard it</b> — security proportional to sensitivity (yours = maximum: encryption, access controls, logging).</li>
+      <li><b>Breach duties</b> — you must keep records of every breach, and report breaches posing "real risk of significant harm" to the Privacy Commissioner and to affected users. A tax-data breach will essentially always meet that bar.</li>
+      <li><b>Access &amp; deletion</b> — users can demand to see their data and have it corrected; honour deletion where you're not legally required to retain.</li>
+      <li><b>Accountability</b> — you must formally designate a privacy officer. At your size, a founder wears this hat, in writing.</li>
+    </ul></li>
+</ul>
+
+<h3>3.2 Quebec Law 25 <span class="cond">CONDITIONAL</span> (but plan for it)</h3>
+<ul>
+  <li><b>What:</b> Quebec's modernized privacy law — the strictest in Canada, with the biggest fines.</li>
+  <li><b>When it applies:</b> the moment you serve Quebec residents, even without an office there.</li>
+  <li><b>What it adds beyond PIPEDA:</b> a named privacy officer published on your site; <b>privacy impact assessments</b> (including one before sending personal data outside Quebec — relevant if your servers or AI providers are in the U.S.); privacy-by-default settings; the right to data portability; and — directly relevant to you — <b>transparency duties for automated decisions</b>: if a decision about a person is made purely by automated means, you must tell them and let them ask questions or object. Your Tax Health Score and AI recommendations should be built with this in mind from day one.</li>
+</ul>
+
+<h3>3.3 SIN handling <span class="must">MUST</span></h3>
+<ul>
+  <li><b>What:</b> The Social Insurance Number has special federal guidance: collect it only when legally required (tax filing qualifies), never use it as your own customer ID, restrict internal access, encrypt it, and never display it in full in the UI, emails, or support tools.</li>
+</ul>
+
+<h3>3.4 Where the data lives <span class="good">STRONGLY ADVISED</span></h3>
+<ul>
+  <li><b>What:</b> No federal law forces tax data to stay in Canada, but if personal data is stored or processed outside Canada (U.S. cloud regions, U.S.-based AI APIs) you must disclose it, assess the risk (mandatory assessment under Law 25 for Quebec), and put contracts (data processing agreements) in place with every vendor that touches the data — cloud host, AI provider, analytics, support tooling, payment processor.</li>
+  <li><b>Practical advice:</b> just use Canadian regions (AWS/Azure/GCP all have them) and Canadian-region AI endpoints where possible. It removes a whole category of questions from users, enterprise partners, and regulators.</li>
+</ul>
+
+<h3>3.5 Records retention <span class="must">MUST</span></h3>
+<ul>
+  <li><b>What:</b> Tension to manage: privacy law says delete what you don't need, but tax records have expected retention (CRA's general reassessment window is ~3 years, records guidance is 6 years, and users expect old returns to stay available). Write a retention schedule: what you keep, for how long, and what "delete my account" actually deletes vs. archives — and say so honestly in the privacy policy.</li>
+</ul>
+
+<h2 class="pagebreak">4. SECURITY OBLIGATIONS</h2>
+<ul>
+  <li><b>Legal baseline <span class="must">MUST</span>:</b> PIPEDA/Law 25 require safeguards proportional to sensitivity — for you that means encryption in transit and at rest, MFA on user accounts, role-based internal access, audit logging, and an incident-response plan you've actually rehearsed. Your demo already promises these publicly; a promise on your website is legally enforceable as a representation, so ship what the security page says.</li>
+  <li><b>SOC 2 Type II <span class="good">STRONGLY ADVISED</span>:</b> not law, but the de-facto ticket to being taken seriously with financial data. Start the audit clock early (Type II needs months of evidence).</li>
+  <li><b>PCI-DSS <span class="cond">CONDITIONAL</span>:</b> applies when you take card payments. Use Stripe/hosted checkout so card data never touches your servers — that keeps you in the lightest compliance tier.</li>
+</ul>
+
+<h2>5. MARKETING AND SELLING — THE RULES MOST STARTUPS BREAK FIRST</h2>
+
+<h3>5.1 CASL — anti-spam law <span class="must">MUST</span></h3>
+<ul>
+  <li><b>What:</b> Canada's anti-spam law, among the strictest in the world. You need <b>consent before</b> sending commercial email/SMS, every message needs your identity and a working unsubscribe, and penalties run to the millions.</li>
+  <li><b>Direct impact on your funnel:</b> the Tax Health Score email-capture flow must include a clear, unchecked-by-default consent checkbox for marketing, and you must keep proof of every consent (who, when, how). Transactional messages ("your return was filed") are fine; "upgrade to Pro" emails need consent.</li>
+</ul>
+
+<h3>5.2 Competition Act — truth in advertising <span class="must">MUST</span></h3>
+<ul>
+  <li><b>What:</b> False or misleading claims about a product are illegal, with serious penalties — and the law now explicitly targets <b>drip pricing</b> (advertising a price that grows with mandatory fees at checkout).</li>
+  <li><b>Direct impact on you:</b> the demo's "$2,431 refund" and "+$420 found" style numbers may not appear in marketing as if typical or guaranteed. "Maximum refund guaranteed" claims need a real, honoured guarantee behind them. "$29.99" must be the actual total (plus tax only). "Free" must actually be free — no forced upgrade to complete a basic return that was advertised as free (this exact pattern has drawn U.S. regulatory action against TurboTax; assume Canada's Competition Bureau noticed).</li>
+</ul>
+
+<h3>5.3 Provincial consumer protection <span class="must">MUST</span></h3>
+<ul>
+  <li><b>What:</b> Each province regulates consumer contracts. The parts that bite subscription software: clear pre-purchase disclosure of total price and terms, rules for <b>auto-renewal</b> (disclose it clearly; some provinces require renewal reminders), easy cancellation, and refund rights for misrepresented services. Quebec's Consumer Protection Act is the strictest — many contract clauses (e.g., some liability waivers) simply don't work against Quebec consumers.</li>
+  <li><b>What to do:</b> one compliant-everywhere design: show total price before payment, plain-language renewal terms, one-click cancel, email receipts.</li>
+</ul>
+
+<h3>5.4 Your legal documents <span class="must">MUST</span></h3>
+<ul>
+  <li><b>Terms of Service:</b> written for this product specifically — what the service is and is not (software, not professional tax advice), user responsibilities (accuracy of what they enter), limitation of liability, dispute terms. Don't copy a generic SaaS template; the "not advice" architecture is your main liability shield and must be consistent across ToS, UI, and marketing.</li>
+  <li><b>Privacy Policy:</b> must reflect what you actually do (see §3) — a policy that overpromises is itself a misleading representation.</li>
+</ul>
+
+<h2 class="pagebreak">6. MONEY-ADJACENT RULES (EASY TO STUMBLE INTO)</h2>
+<ul>
+  <li><b>Tax Rebate Discounting Act <span class="cond">CONDITIONAL</span>:</b> a specific federal law regulating anyone who gives clients an instant/advance refund in exchange for their actual CRA refund. It caps what you can charge and imposes registration. Applies only if you ever offer "get your refund today" — if you do, read this law first; if not, ignore it.</li>
+  <li><b>FINTRAC / money services <span class="cond">CONDITIONAL</span>:</b> if you ever hold or move client money (receiving refunds on behalf of users, wallets, paying tax bills for users), you likely become a Money Services Business with registration and anti-money-laundering duties. Filing software that never touches the refund itself does not trigger this. Design decision: <b>don't touch the money</b> unless it's a deliberate, lawyered strategy.</li>
+  <li><b>Your own taxes <span class="must">MUST</span>:</b> corporate T2 returns, GST/HST remittance, payroll withholding once you have employees. A tax startup that's late on its own taxes is a bad headline.</li>
+</ul>
+
+<h2>7. GIVING "ADVICE" AND LIMITING LIABILITY</h2>
+<ul>
+  <li><b>Good news:</b> tax preparation is not a licensed profession in Canada — you don't need to be a CPA to sell tax software or preparation. <b>But:</b> you may not use protected titles ("Chartered Professional Accountant," "CPA") or imply professional accounting services you don't provide; and only lawyers can provide legal services, so keep the product clearly on the "information and calculation" side of the line, never "legal opinion."</li>
+  <li><b>Negligence still applies <span class="must">MUST</span>:</b> no licence needed doesn't mean no liability. If your engine mis-calculates or your AI gives wrong guidance and a user is reassessed with penalties, you can be sued for negligent misrepresentation. Your defences are: accuracy (test the engine relentlessly), honest framing (educational estimates, user reviews before filing), disclaimers (necessary but not sufficient — courts look at the whole picture), and insurance.</li>
+  <li><b>Insurance <span class="good">STRONGLY ADVISED</span>:</b> before real users: <b>Errors &amp; Omissions</b> (covers claims that your software/guidance was wrong — many competitors also market an "accuracy guarantee" backed by this), <b>Cyber liability</b> (breach response costs, notification, credit monitoring), and standard <b>CGL + Directors &amp; Officers</b>. Disclose your AI features to the insurer explicitly — an undisclosed AI advice feature can void coverage.</li>
+  <li><b>The AI copilot specifically:</b> no dedicated AI statute exists in Canada today (the proposed AIDA died in January 2025 and hasn't returned; the government has signalled any future law will be a new design). That means your AI is governed by everything above — privacy law, consumer protection, misleading advertising, negligence. Practical rules: label AI answers as AI; cite CRA sources; keep humans/deterministic calculators in the loop for anything that changes a filing; log every AI interaction; and never let the model see more personal data than the question needs.</li>
+</ul>
+
+<h2>8. QUEBEC — DECIDE, DON'T DRIFT</h2>
+<ul>
+  <li>Serving Quebec adds, on top of everything above: <b>TP1 certification</b> with Revenu Québec (§2.3), <b>Law 25</b> privacy duties (§3.2), the <b>Charter of the French Language (Bill 96)</b> — product, contracts, and support in French, with French versions at least equal to English — Quebec's stricter <b>Consumer Protection Act</b>, and <b>QST</b> registration.</li>
+  <li>Roughly: Quebec ≈ a second country for compliance purposes, holding ~22% of Canadian filers. Launching rest-of-Canada first is legitimate — but geo-detect and clearly turn away Quebec filers until you're ready, and don't market in Quebec before then.</li>
+</ul>
+
+<h2>9. PEOPLE AND ACCESSIBILITY</h2>
+<ul>
+  <li><b>Hiring <span class="cond">CONDITIONAL</span>:</b> once you hire: payroll registration and source deductions, provincial employment standards (hours, vacation, termination notice), workers' compensation registration where required, and written contracts with IP assignment + confidentiality for every employee and contractor. Be careful classifying "contractors" who work like employees — CRA reassesses that.</li>
+  <li><b>Accessibility <span class="good">STRONGLY ADVISED</span>:</b> Ontario's AODA imposes WCAG accessibility on larger organizations, and accessible design is increasingly expected (and litigated) generally. Building to WCAG 2.1 AA from the start is far cheaper than retrofitting — and tax software has many elderly and disabled users.</li>
+</ul>
+
+<h2>10. THE ONGOING COMPLIANCE CALENDAR</h2>
+<table>
+  <tr><th>When</th><th>What</th></tr>
+  <tr><td>Every year, ~Nov–Feb</td><td>NETFILE re-certification against new CRA test returns (+ Revenu Québec if in Quebec); update engine for that year's tax changes</td></tr>
+  <tr><td>Every year</td><td>Corporate annual return; T2 corporate tax filing; insurance renewals (re-disclose product changes, especially AI features)</td></tr>
+  <tr><td>Monthly/quarterly</td><td>GST/HST (and QST) remittance; payroll remittances</td></tr>
+  <tr><td>Continuous</td><td>Breach log; CASL consent records; privacy requests (access/deletion) within statutory deadlines; keep ToS/Privacy Policy matching actual practice every time the product changes</td></tr>
+  <tr><td>Each new feature</td><td>Quick legal screen: does it touch new data (privacy assessment)? move money (§6)? make claims (§5.2)? make automated decisions (Law 25)?</td></tr>
+  <tr><td>Watch list</td><td>Federal privacy-law reform and any new AI legislation (both signalled as priorities, neither passed as of mid-2026); CRA's expansion of automatic filing</td></tr>
+</table>
+
+<h2>11. PRIORITY ORDER — IF YOU DO THINGS IN SEQUENCE</h2>
+<div class="verdict">
+  <b>Phase 1 — before anything public:</b> incorporate + shareholders' agreement + IP assignments; BN/GST-HST; ToS + Privacy Policy written for this product; CASL-compliant signup; truthful marketing copy (kill fake precision); name a privacy officer.<br><br>
+  <b>Phase 2 — before holding real tax data:</b> full PIPEDA safeguard build-out (encryption, MFA, access logs, breach plan, retention schedule); vendor DPAs; Canadian data residency; E&amp;O + cyber insurance; SIN-handling rules implemented.<br><br>
+  <b>Phase 3 — before filing anything:</b> NETFILE certification cycle; accuracy-testing regime for the engine; "review before you file" UX; accuracy guarantee terms (if offered).<br><br>
+  <b>Phase 4 — deliberate expansions, each with its own legal work:</b> Quebec (TP1 + Law 25 + French); assisted filing (EFILE); refund advances (Tax Rebate Discounting Act); anything touching client money (FINTRAC analysis first).
+</div>
+
+<p class="small">Prepared as an internal planning document, August 2026. This is an orientation map, not legal advice; laws summarized here (especially Quebec Law 25 details, Competition Act amendments, consumer-protection rules per province, and the status of federal privacy/AI reform) change and should be verified with a Canadian lawyer before each launch phase.</p>
