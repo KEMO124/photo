@@ -1,4 +1,4 @@
-# Two-Person Startup Ideas for Canada
+# Opportunities in the Canadian Market
 ### Software-first, low-capital, built by consistent vibe coding + real marketing
 
 *Prepared August 2026. Companion piece to the AI Tax Operating System, Proofed, and Onyx Atlas reviews in this repo.*
