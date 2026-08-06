@@ -47,6 +47,46 @@ These two ideas have **opposite risk shapes**. Idea #1's risks are mostly **liab
 
 ---
 
+## What credibility / licensing you actually need — and what it realistically costs
+
+**The blunt headline first: neither idea requires a licence to operate.** Canada does not license software companies. There is no permit for "landlord software" or "trades software," no regulator you apply to, no exam you sit. What you actually need splits into three layers: (1) basic corporate hygiene both ideas share, (2) liability engineering specific to #1, and (3) trust engineering specific to #2. None of it is a wall; all of it is a speed bump with a price tag — itemized below. But note the flip side: no licensing barrier for you means no licensing barrier for competitors either. Permission is not the moat in either business. Correctness and distribution are.
+
+### Layer 1 — The shared foundation (both ideas, do this once)
+
+| Item | Realistic cost | Notes |
+|---|---|---|
+| Incorporation | ~$200 federal (online) or ~$300 Ontario, one-time | Incorporate from day one — both ideas carry liability you do not want on your personal names. Add ~$300–700/yr for an accountant to file the corporate return. |
+| GST/HST registration | Free | Mandatory once you pass $30K revenue in four quarters; register early anyway so invoices look established. |
+| Tech E&O + cyber insurance | [$500–2,500/yr in Canada](https://getcertain.ca/business/errors-omissions/) | The single most important credibility purchase either idea makes. Priced by revenue, so it starts cheap and scales with you. |
+| Terms of service + privacy policy | $500–2,000 one-time (lawyer-reviewed) | PIPEDA compliance itself costs nothing to "acquire" — it's a set of obligations (consent, safeguards, breach reporting), not a registration. |
+| Trademark | ~$480/class via CIPO, deferrable | Skip at launch; file when the name has proven it's worth keeping. |
+
+**Foundation total: roughly $1,500–4,000 in year one.** That's the entire regulatory cost of existing as a credible Canadian software company.
+
+### Layer 2 — Idea #1's real spend: liability engineering, not licensing
+
+- **The legal line you must not cross, precisely stated:** under Ontario's Law Society Act, *providing legal services* — advice or representation — requires a lawyer or [licensed paralegal](https://www.runsensible.com/blog/paralegals-authorized-ontario/) (LTB representation is squarely paralegal scope). *Self-help document assembly* with clear disclaimers is the established carve-out that LawDepot and every will-kit in the country operates in. Your product must live on the document-assembly side of that line in its wording everywhere: "this tool prepares forms based on your inputs; review before serving" — never "you should evict" or "we recommend."
+- **One-time template and wording review by a paralegal or landlord-tenant lawyer: ~$1,500–4,000.** This is the closest thing to a "licence" Idea #1 has, and it's the best money in the whole plan. It buys three things at once: correctness of the N4/N5/N12 logic, a professional opinion that your framing stays on the right side of the LSO line, and a name you can put on the website — which is also your single biggest credibility asset with landlords.
+- **Ongoing rule-tracking: ~$200–500 per legislative update** if you pay the same professional to re-verify when forms or guidelines change (roughly annually). Cheap insurance for the risk that actually kills you.
+- **E&O at the higher end of the band (~$1,500–3,000/yr)** and make sure the policy explicitly covers the document-generation function — say what the product does when applying; a claim denied for misrepresentation is worse than no policy.
+- **Two things to explicitly NOT acquire:** do not become a consumer reporting agency (Ontario's Consumer Reporting Act registration plus credit-bureau vetting is heavy, slow, and built for bigger companies — integrate SingleKey/Certn as a partner API instead, $0 licensing, revenue share), and do not touch rent money (holding or transmitting funds walks you toward FINTRAC money-services registration — let payments stay landlord-to-tenant, or use Stripe if you ever add them).
+
+**Idea #1 realistic total: ~$4,000–8,000 in year one** on top of the foundation-level basics it shares. Hard? No — it's two professional engagements and an insurance policy. The difficulty isn't acquiring any of it; it's the *discipline* of keeping every pixel of the product on the self-help side of the line as you grow.
+
+### Layer 3 — Idea #2's real spend: trust engineering, not licensing
+
+- **Genuinely zero licences.** Trades are licensed; software for trades is not. Displaying and calculating GST/HST correctly is arithmetic, not tax advice. There is no regulator between you and launch.
+- **Payments: let Stripe carry the regulatory weight.** Stripe Connect makes Stripe the regulated money-transmitter; onboarding is a KYB check measured in days, and costs you nothing but the per-transaction fees. The one rule: never custody funds yourself — money flows homeowner → contractor with you as the platform, or you've walked into FINTRAC territory no two-person team wants.
+- **The actual credibility spend is social, not regulatory.** Trades buy from people vouched for by other trades. The budget that matters: local construction/home-builders' association membership ($200–1,000/yr — puts a recognizable logo on your site and you in the room), a table at one regional trade show ($500–2,000), and the unpaid-but-expensive currency of showing up in trade Facebook groups helpfully for months before selling anything. Insurance at the standard band ($500–1,500/yr) since nothing you ship creates legal exposure.
+
+**Idea #2 realistic total: ~$1,500–4,000 in year one, mostly overlapping the shared foundation.** The "licensing" chapter of this idea is one page long; the trust chapter never ends.
+
+### The honest comparison
+
+Idea #1's credibility stack costs roughly twice as much and involves lawyers, but every dollar buys something durable: reviewed templates and a professional's name are assets competitors must also pay for. Idea #2's stack is nearly free, which is exactly the problem — it's nearly free for everyone else too. In both cases the realistic all-in regulatory-and-credibility budget for year one is **under $10,000 combined**, which means this layer should never be the reason to hesitate. The expensive part of both businesses was never the permission. It's the eighteen months of consistency after you have it.
+
+---
+
 ## Verdict
 
 Neither risk profile is disqualifying; they're just different bets. **#1 is the better business with the scarier failure mode** — a real gap, proven willingness to pay, and a defensible provincial moat, purchased by accepting legal-correctness liability that must be engineered and insured against from day one, not patched in later. **#2 is the safer product with the harder business** — nothing you ship can void someone's eviction case, but you're grinding out thin-margin subscriptions in a market where the incumbent can nuke your positioning at will. If you run the portfolio sequence from the main document, the honest implication is: start #1 *because* its risks are front-loaded and controllable (lawyer review, insurance, Ontario-only scope), and treat #2 as the follow-on you enter only once free-channel distribution has been proven to work — because #2 without a working zero-cost acquisition machine is just an unfunded price war.
