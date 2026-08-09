@@ -1,0 +1,270 @@
+<meta charset="utf-8">
+<title>ONYX Ledger — Tax Engine Formulas &amp; Data Reference</title>
+<style>
+  @page { margin: 18mm 16mm; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: #111; max-width: 820px; margin: 0 auto; padding: 24px; line-height: 1.5; font-size: 14px; }
+  h1 { font-size: 24px; letter-spacing: 1px; }
+  h2 { font-size: 18px; margin-top: 34px; border-bottom: 2px solid #111; padding-bottom: 4px; }
+  h3 { font-size: 15px; margin-top: 22px; }
+  ul { margin: 6px 0 12px 0; }
+  li { margin: 3px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; margin: 10px 0; }
+  th, td { border: 1px solid #999; padding: 5px 8px; text-align: left; vertical-align: top; }
+  th { background: #efefef; }
+  code, pre { font-family: 'Courier New', monospace; font-size: 12px; background: #f4f4f4; }
+  pre { padding: 10px 12px; border: 1px solid #ccc; overflow-x: auto; line-height: 1.4; }
+  .warn { border-left: 4px solid #C0392B; padding: 8px 12px; margin: 10px 0; background: #fdf3f2; }
+  .note { border-left: 4px solid #1A5BA6; padding: 8px 12px; margin: 10px 0; background: #f2f6fc; }
+  .legend { border: 1px solid #999; padding: 10px 14px; background: #f7f7f7; font-size: 12.5px; margin-bottom: 24px; }
+  .pagebreak { page-break-before: always; }
+  .small { font-size: 12px; color: #444; }
+</style>
+
+<h1>TAX ENGINE — FORMULAS &amp; DATA REFERENCE</h1>
+<p><em>All calculation logic and parameter data for the ONYX Ledger engine &middot; Tax years 2025 &amp; 2026 &middot; Prepared August 2026</em></p>
+
+<div class="legend">
+  <b>How to use this:</b> every formula here is deterministic — the engine is these formulas plus annual parameter tables.
+  A companion file, <code>tax_engine_params.json</code>, holds the same numbers in machine-readable form so the code reads config, never hardcoded values.
+  <b>Golden rule:</b> the 2025 figures apply to 2025 income (returns filed spring 2026); 2026 figures apply to income being earned now.
+  Verify every number against CRA's published tables before certification season — this document is a build reference, not a certified source.
+</div>
+
+<h2>1. THE CORE PIPELINE — HOW EVERY RETURN COMPUTES</h2>
+<pre>
+totalIncome      = employment + selfEmployment + interest + grossedUpDividends
+                 + taxableCapitalGains + otherIncome            // T1 line 15000
+netIncome        = totalIncome − deductions                     // line 23600
+                   // deductions: RRSP, FHSA, childcare, union dues,
+                   // moving, support paid, carrying charges
+taxableIncome    = netIncome − additionalDeductions             // line 26000
+                   // e.g. losses carried forward, security options deduction
+
+fedTaxBeforeCredits  = applyBrackets(taxableIncome, FED_BRACKETS[year])
+provTaxBeforeCredits = applyBrackets(taxableIncome, PROV_BRACKETS[prov][year])
+
+fedTax  = max(0, fedTaxBeforeCredits  − fedNonRefundableCredits  − dividendTaxCredit_fed)
+provTax = max(0, provTaxBeforeCredits − provNonRefundableCredits − dividendTaxCredit_prov
+                 + provincialSurtax)                             // ON only, see §4
+
+totalPayable = fedTax + provTax + CPP_selfEmployed_owed
+refundOrOwing = amountsPaid − totalPayable
+                // amountsPaid: tax withheld on T4/T5 slips (box 22),
+                // instalments paid, refundable credits (CWB, etc.)
+                // positive = refund, negative = balance owing
+</pre>
+<pre>
+function applyBrackets(income, brackets):        // brackets sorted ascending
+    tax = 0
+    for each (threshold, rate, nextThreshold) in brackets:
+        slice = min(income, nextThreshold) − threshold
+        if slice &lt;= 0: break
+        tax += slice × rate
+    return tax
+</pre>
+
+<h2>2. FEDERAL TAX BRACKETS</h2>
+<div class="note"><b>Rate-cut note:</b> the lowest federal rate was cut from 15% to 14% effective July 1, 2025 — so tax year <b>2025 uses a blended 14.5%</b> on the first bracket, and <b>2026 uses 14%</b>. Non-refundable credits are converted to tax value at this same lowest rate (see §3), so the credit rate is 14.5% for 2025 and 14% for 2026.</div>
+<table>
+  <tr><th>Bracket (taxable income)</th><th>2025 rate</th><th>2026 bracket</th><th>2026 rate</th></tr>
+  <tr><td>$0 – $57,375</td><td>14.5%</td><td>$0 – $58,523</td><td>14%</td></tr>
+  <tr><td>$57,375 – $114,750</td><td>20.5%</td><td>$58,523 – $117,045</td><td>20.5%</td></tr>
+  <tr><td>$114,750 – $177,882</td><td>26%</td><td>$117,045 – $181,440</td><td>26%</td></tr>
+  <tr><td>$177,882 – $253,414</td><td>29%</td><td>$181,440 – $258,482</td><td>29%</td></tr>
+  <tr><td>over $253,414</td><td>33%</td><td>over $258,482</td><td>33%</td></tr>
+</table>
+<p><b>Annual indexation:</b> thresholds and most credit amounts are multiplied by CRA's indexation factor each year (2025: 2.7% &middot; 2026: 2.0%). Store the factor; every November CRA publishes next year's numbers.</p>
+
+<h2>3. FEDERAL NON-REFUNDABLE CREDITS (the big ones)</h2>
+<p>All credits below are <b>amounts</b>; convert to tax reduction via: <code>creditValue = amount × lowestFedRate</code> (14.5% in 2025, 14% in 2026). Credits can reduce tax to zero but never below (except refundable ones, §9).</p>
+
+<h3>3.1 Basic Personal Amount (BPA) — with high-income phase-out</h3>
+<pre>
+// 2025: max 16,129, min 14,538, phase-out range = 4th bracket (177,882 → 253,414)
+// 2026: max 16,452, min ~14,829 (verify), range 181,440 → 258,482
+if netIncome &lt;= rangeStart:      bpa = bpaMax
+else if netIncome &gt;= rangeEnd:   bpa = bpaMin
+else: bpa = bpaMax − (bpaMax − bpaMin) × (netIncome − rangeStart) / (rangeEnd − rangeStart)
+</pre>
+
+<h3>3.2 The rest of the standard stack</h3>
+<table>
+  <tr><th>Credit</th><th>2025 amount</th><th>Formula / rule</th></tr>
+  <tr><td>Canada Employment Amount</td><td>$1,471</td><td><code>min(1471, employmentIncome)</code> — everyone with a T4 gets it</td></tr>
+  <tr><td>CPP/QPP contributions</td><td>actual paid</td><td>base CPP contributions are a credit; the <b>enhanced</b> portion (incl. CPP2) is a <b>deduction</b> from income instead — see §5</td></tr>
+  <tr><td>EI premiums</td><td>actual paid (max $1,077.48)</td><td>credit for premiums from T4 box 18</td></tr>
+  <tr><td>Age amount (65+)</td><td>$9,028</td><td>reduced by 15% of netIncome over $45,522, to zero</td></tr>
+  <tr><td>Medical expenses</td><td>threshold-based</td><td><code>max(0, eligibleMedical − min(0.03 × netIncome, 2834))</code> — claim on either spouse; the <b>lower-income spouse usually wins</b> (lower 3% threshold). 12-month claim window ending in tax year</td></tr>
+  <tr><td>Charitable donations</td><td>two-tier</td><td><code>lowestRate × min(200, don) + 29% × amountOver200</code> (33% on the portion matching income in the 33% bracket). Combine spouses; can carry forward 5 years — <b>optimizer opportunity: pooling</b></td></tr>
+  <tr><td>Tuition (T2202)</td><td>actual</td><td>credit at lowest rate; unused amounts carry forward indefinitely or transfer up to $5,000 to parent/spouse</td></tr>
+  <tr><td>Spouse / eligible dependant</td><td>= BPA</td><td>BPA-sized amount reduced dollar-for-dollar by the dependant's net income</td></tr>
+  <tr><td>Disability (DTC)</td><td>$10,138</td><td>requires CRA-approved T2201; transferable from dependant</td></tr>
+  <tr><td>Home buyers' amount</td><td>$10,000</td><td>flat, year of first-home purchase</td></tr>
+  <tr><td>First $200 / over $200 donation rates</td><td colspan="2">first-tier uses lowest rate (14.5%/14%); keep as parameters, they moved with the 2025 rate cut</td></tr>
+</table>
+
+<h2 class="pagebreak">4. PROVINCIAL TAX (2025 brackets — index annually)</h2>
+<p>Same <code>applyBrackets</code> function, different tables. Each province also has its own BPA and credit set (store per-province params). Quebec excluded (separate TP1 system, out of scope at launch).</p>
+<table>
+  <tr><th>Province</th><th>2025 brackets → rates</th><th>2025 prov. BPA</th></tr>
+  <tr><td>Ontario</td><td>to $52,886: 5.05% &middot; to $105,775: 9.15% &middot; to $150,000: 11.16% &middot; to $220,000: 12.16% &middot; above: 13.16%</td><td>$12,747</td></tr>
+  <tr><td>British Columbia</td><td>to $49,279: 5.06% &middot; to $98,560: 7.7% &middot; to $113,158: 10.5% &middot; to $137,407: 12.29% &middot; to $186,306: 14.7% &middot; to $259,829: 16.8% &middot; above: 20.5%</td><td>$12,932</td></tr>
+  <tr><td>Alberta</td><td><b>new for 2025:</b> to $60,000: 8% &middot; to $151,234: 10% &middot; to $181,481: 12% &middot; to $241,974: 13% &middot; to $362,961: 14% &middot; above: 15%</td><td>$22,323</td></tr>
+  <tr><td>Saskatchewan</td><td>to $53,463: 10.5% &middot; to $152,750: 12.5% &middot; above: 14.5%</td><td>$19,491</td></tr>
+  <tr><td>Manitoba</td><td>to $47,564: 10.8% &middot; to $101,200: 12.75% &middot; above: 17.4%</td><td>$15,780</td></tr>
+  <tr><td>Nova Scotia</td><td>to $30,507: 8.79% &middot; to $61,015: 14.95% &middot; to $95,883: 16.67% &middot; to $154,650: 17.5% &middot; above: 21%</td><td>$11,744</td></tr>
+  <tr><td>New Brunswick</td><td>to $51,306: 9.4% &middot; to $102,614: 14% &middot; to $190,060: 16% &middot; above: 19.5%</td><td>$13,396</td></tr>
+  <tr><td>PEI</td><td>to $33,328: 9.5% &middot; to $64,656: 13.47% &middot; to $105,000: 16.6% &middot; to $140,000: 17.62% &middot; above: 19%</td><td>$14,250</td></tr>
+  <tr><td>Newfoundland &amp; Labrador</td><td>8 brackets, 8.7% (to $44,192) rising to 21.8% (over ~$1.1M)</td><td>$11,067</td></tr>
+</table>
+<div class="warn"><b>Verify all provincial figures against each province's published 2025/2026 tables before shipping</b> — provinces index by their own factors (some, like PEI historically, don't index every amount), and Nova Scotia only began indexing in 2025. Treat this table as scaffolding.</div>
+
+<h3>4.1 Ontario surtax — the one weird extra formula</h3>
+<pre>
+// applied AFTER Ontario credits, on Ontario basic tax:
+surtax = 0.20 × max(0, onBasicTax − 5710) + 0.36 × max(0, onBasicTax − 7307)   // 2025 thresholds
+onTax  = onBasicTax + surtax − ontarioTaxReduction  // low-income reduction also exists (LIFT credit)
+</pre>
+
+<h2>5. PAYROLL DATA — CPP, CPP2, EI (needed for credits, self-employed, and refund accuracy)</h2>
+<table>
+  <tr><th>Parameter</th><th>2025</th><th>2026</th></tr>
+  <tr><td>CPP earnings ceiling (YMPE)</td><td>$71,300</td><td>$74,600</td></tr>
+  <tr><td>CPP basic exemption</td><td>$3,500</td><td>$3,500</td></tr>
+  <tr><td>CPP rate (employee)</td><td>5.95%</td><td>5.95%</td></tr>
+  <tr><td>CPP max (employee)</td><td>$4,034.10</td><td>$4,230.45</td></tr>
+  <tr><td>CPP2 second ceiling (YAMPE)</td><td>$81,200</td><td>$85,000</td></tr>
+  <tr><td>CPP2 rate / max (employee)</td><td>4% / $396.00</td><td>4% / $416.00</td></tr>
+  <tr><td>EI insurable max (MIE)</td><td>$65,700</td><td>$68,900</td></tr>
+  <tr><td>EI rate / max (employee)</td><td>1.64% / $1,077.48</td><td>1.63% / $1,123.07</td></tr>
+</table>
+<pre>
+cpp  = 0.0595 × clamp(pensionableEarnings − 3500, 0, YMPE − 3500)
+cpp2 = 0.04   × clamp(pensionableEarnings − YMPE, 0, YAMPE − YMPE)
+ei   = eiRate × min(insurableEarnings, MIE)
+// self-employed pay BOTH halves of CPP (11.9% / 8%); half is a deduction, base portion a credit
+// credit/deduction split: base CPP (4.95% part) → credit; enhanced (1% part + CPP2) → deduction line 22215
+</pre>
+
+<h2 class="pagebreak">6. INVESTMENT INCOME FORMULAS</h2>
+<h3>6.1 Capital gains</h3>
+<pre>
+taxableCapitalGain = 0.50 × (proceeds − adjustedCostBase − sellingCosts)
+// inclusion rate is 50% — the proposed 2/3 increase was CANCELLED; do not build it in
+// capital LOSSES offset gains only; net losses carry back 3 yrs / forward indefinitely
+// superficial loss rule: loss denied if same security bought within ±30 days
+</pre>
+<h3>6.2 Dividends (Canadian) — gross-up and credit</h3>
+<pre>
+// ELIGIBLE dividends (most public companies, T5 box 24/25):
+grossedUp   = dividend × 1.38
+fedDTC      = grossedUp × 0.150198
+// NON-ELIGIBLE (small business, box 10/11):
+grossedUp   = dividend × 1.15
+fedDTC      = grossedUp × 0.090301
+// provinces have their own DTC rates — parameter table per province
+// interest &amp; foreign dividends: no gross-up, fully taxable at marginal rate
+</pre>
+
+<h2>7. REGISTERED ACCOUNTS — LIMITS AND RULES</h2>
+<table>
+  <tr><th>Account</th><th>2025</th><th>2026</th><th>Rules the engine must enforce</th></tr>
+  <tr><td>RRSP</td><td>18% of prior-year earned income, max <b>$32,490</b></td><td>max <b>$33,810</b></td><td>room accumulates (carry-forward from CRA Notice of Assessment); contributions in first 60 days of a year deductible against prior year; over-contribution buffer $2,000 then 1%/month penalty; deduction can be <b>deferred</b> to a future higher-income year (optimizer opportunity)</td></tr>
+  <tr><td>TFSA</td><td>$7,000</td><td>$7,000</td><td>no deduction, growth tax-free; room accumulates from age 18/2009; withdrawals restore room <b>next Jan 1</b> (re-contributing same year = over-contribution, 1%/mo)</td></tr>
+  <tr><td>FHSA</td><td>$8,000/yr</td><td>$8,000/yr</td><td>$40,000 lifetime; deduction like RRSP <b>and</b> tax-free withdrawal for first home (best of both); unused annual room carries forward max $8,000; 15-year max life; must be first-time buyer to open</td></tr>
+  <tr><td>RESP</td><td colspan="2">$50,000 lifetime/child</td><td>CESG grant = 20% of first $2,500/yr = $500 free money (optimizer nudge)</td></tr>
+</table>
+
+<h2>8. REFUND ESTIMATION (the number on your dashboard)</h2>
+<pre>
+estimatedRefund = taxWithheld                       // Σ T4 box 22, T5 withholding
+                + instalmentsPaid
+                + refundableCredits                  // CWB, eligible educator, etc.
+                − totalPayable                       // from §1
+// CONFIDENCE: show a range, not a point. Drivers of uncertainty:
+//   missing slips (AFR pull incomplete), unentered deductions, pending RRSP (first-60-days)
+// display: "Estimated refund $X – $Y" until all declared sources are entered
+</pre>
+<div class="warn"><b>Why withholding ≠ tax owed (and refunds exist):</b> employers withhold per-paycheque as if that pay rate ran all year, ignoring RRSP contributions, medical, donations, and multi-job effects. Two jobs = each withholds as if it's the only income = usually a balance <b>owing</b>. Detect the multiple-T4 case and warn the user early — it's the #1 "surprise bill" scenario.</div>
+
+<h2>9. MARGINAL vs EFFECTIVE RATE (dashboard metrics)</h2>
+<pre>
+marginalRate  = fedRate(taxableIncome) + provRate(taxableIncome)      // rate on the NEXT dollar
+effectiveRate = (fedTax + provTax) / totalIncome                      // average on ALL dollars
+// example, ON 2025 @ $80,000 taxable: marginal = 20.5% + 9.15% = 29.65%
+// note for accuracy: marginal rate near credit phase-out zones (BPA clawback, age amount,
+// OAS clawback) is HIGHER than the bracket rate — compute marginal numerically:
+trueMarginal = tax(income + 100) − tax(income)) / 100                 // robust method, use this
+</pre>
+
+<h2 class="pagebreak">10. SIMULATOR FORMULAS (your differentiator)</h2>
+<h3>10.1 RRSP contribution simulator</h3>
+<pre>
+// NEVER use flat "contribution × marginalRate" — wrong when crossing brackets. Do this:
+taxSaving = totalTax(taxableIncome) − totalTax(taxableIncome − contribution)
+// where totalTax = fed + prov, full pipeline both times. Also recompute income-tested
+// benefits (CCB, GST credit, OAS clawback) — RRSP deductions can INCREASE benefits;
+// showing that combined number is a feature competitors don't have
+alsoShow: refundPerDollar curve, room remaining, over-contribution warning
+</pre>
+<h3>10.2 FHSA simulator</h3>
+<pre>
+same taxSaving formula as RRSP (it's a deduction), capped at min(8000 + carryforward, 40000 − lifetimeUsed)
+comparison view: FHSA vs RRSP-HBP vs TFSA for a down-payment goal
+</pre>
+<h3>10.3 Capital gains timing simulator</h3>
+<pre>
+taxThisYear = totalTax(income + 0.5 × gain) − totalTax(income)
+taxNextYear = totalTax(projectedNextIncome + 0.5 × gain) − totalTax(projectedNextIncome)
+show: difference, plus December/January split option (half the gain in each year
+      uses two sets of brackets — legitimate and material for large gains)
+</pre>
+<h3>10.4 Donation pooling simulator</h3>
+<pre>
+// carrying forward 5 yrs &amp; combining spouses beats claiming $150/yr repeatedly,
+// because only amounts OVER $200/yr earn the 29% rate:
+annualClaim  = 5 × (lowestRate × 150)                          // five small claims
+pooledClaim  = lowestRate × 200 + 0.29 × (750 − 200)           // one pooled claim
+</pre>
+
+<h2>11. TAX HEALTH SCORE — PROPOSED FORMULA (your own metric — you define it)</h2>
+<pre>
+score = Σ weightedComponents, scaled to 0–100:
+  25 pts  registeredAccountUsage   = 25 × usedRoom / availableRoom   (RRSP+FHSA+TFSA blended)
+  20 pts  deductionCapture         = 20 × claimedDeductions / detectedEligible
+          (medical, donations, union dues, childcare, WFH-detailed, tuition)
+  15 pts  withholdingAccuracy      = 15 × (1 − |refundOrOwing| / totalPayable), floor 0
+          (big refund = interest-free loan to CRA; big owing = planning failure — both score low)
+  15 pts  filingHygiene            = on-time history, no missing slips vs AFR, instalments paid
+  15 pts  incomeStructure          = credit for tax-efficient asset location
+          (interest inside registered accounts, dividends/gains outside, income splitting used)
+  10 pts  planningEngagement       = simulators run, RRSP deadline met, carry-forwards tracked
+// Every point lost MUST map to a concrete action card ("Contribute $X to RRSP: +N pts, ~$Y tax saved")
+// — the score is only defensible if its dollar figures come from THIS engine, not marketing copy
+</pre>
+
+<h2>12. INCOME-TESTED CLAWBACKS (needed for accurate marginal rates)</h2>
+<table>
+  <tr><th>Program</th><th>2025 parameters</th><th>Formula</th></tr>
+  <tr><td>OAS recovery tax</td><td>threshold ≈ $93,454 (verify)</td><td><code>clawback = 0.15 × max(0, netIncome − threshold)</code>, to 100% of OAS</td></tr>
+  <tr><td>Canada Child Benefit</td><td>base $7,997/child &lt;6, $6,748 ages 6–17 (2025-26 year)</td><td>reduced by family-income tiers — implement CRA's published phase-out table; RRSP deductions raise CCB (simulator hook)</td></tr>
+  <tr><td>GST/HST credit &amp; CWB</td><td>CRA tables</td><td>refundable; phase in/out by family net income — table-driven, revisit annually</td></tr>
+</table>
+
+<h2>13. THINGS YOUR DEMO IMPLIES THAT ARE WRONG OR DEAD — FIX BEFORE CODING</h2>
+<ul>
+  <li><b>Work-from-home $2/day flat method is DEAD</b> (ended after 2022). WFH now requires the <b>detailed method</b>: employer-signed T2200 + T777 form, claiming <code>workspaceArea/homeArea × eligibleHomeCosts</code> (rent, utilities; commission employees add more; <b>mortgage principal never eligible</b>). The demo's "+$180 WFH" card must be built on this, not the flat rate.</li>
+  <li><b>Consumer carbon rebate (CCR) ended April 2025</b> — no rebate card in the product.</li>
+  <li><b>Capital gains inclusion stays 50%</b> — the announced 2/3 increase was cancelled; don't build remnants of it.</li>
+  <li><b>The lowest federal rate is 14.5%/14%, not 15%</b> — any calculator copied from a pre-2025 tutorial will be wrong on every bracket-1 dollar and every credit.</li>
+</ul>
+
+<h2>14. HOW TO STRUCTURE THIS IN CODE</h2>
+<ul>
+  <li><b>Everything above is config, not code.</b> One <code>tax_engine_params.json</code> keyed by <code>year → jurisdiction → parameter</code> (companion file provided). The formulas never change annually; only the tables do. Annual update = new JSON block + rerun test suite.</li>
+  <li><b>Money math:</b> compute in cents (integers) or a decimal type — never floating point. CRA rounding: per-line rounding to the cent; final balances to the dollar follow form rules.</li>
+  <li><b>Test harness from day one:</b> build ~50 personas (single T4; two T4s; T4+RRSP; self-employed; investor with gains/dividends; senior with OAS; parent with CCB; each province) and lock expected outputs. When CRA's certification test returns arrive, they slot into the same harness. Cross-check personas against an existing certified product's results while developing.</li>
+  <li><b>Every computed number carries provenance:</b> store which formula + which parameters produced it, so the UI can show "why" (trust feature) and support can debug (liability feature).</li>
+</ul>
+
+<p class="small">Prepared August 2026 from CRA-published 2025 figures and announced 2026 indexation (factor 2.0%). Provincial tables, clawback thresholds marked "verify," and all credit amounts must be re-validated against official CRA / provincial publications each November before the filing season. This document is an engineering reference, not tax advice.</p>

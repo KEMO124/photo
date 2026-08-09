@@ -1,0 +1,153 @@
+{
+  "_meta": {
+    "description": "ONYX Ledger tax engine parameters. Engine code reads ONLY from this file - never hardcode tax numbers. Update every November when CRA publishes next year's indexed amounts, then rerun the full persona test suite.",
+    "prepared": "2026-08",
+    "verify_before_certification": true,
+    "notes": [
+      "2025 lowest federal rate is blended 14.5% (15% Jan-Jun, 14% Jul-Dec); 2026 is 14%.",
+      "Non-refundable credit rate = lowest federal rate for that year.",
+      "Capital gains inclusion stays 0.50 - the 2/3 increase was cancelled.",
+      "Provincial figures are 2025 scaffolding - verify each province before shipping.",
+      "Quebec (TP1) intentionally excluded at launch."
+    ]
+  },
+  "federal": {
+    "2025": {
+      "indexation_factor": 1.027,
+      "brackets": [
+        { "upTo": 57375, "rate": 0.145 },
+        { "upTo": 114750, "rate": 0.205 },
+        { "upTo": 177882, "rate": 0.26 },
+        { "upTo": 253414, "rate": 0.29 },
+        { "upTo": null, "rate": 0.33 }
+      ],
+      "credit_rate": 0.145,
+      "bpa": { "max": 16129, "min": 14538, "phaseout_start": 177882, "phaseout_end": 253414 },
+      "canada_employment_amount": 1471,
+      "age_amount": { "max": 9028, "reduction_rate": 0.15, "income_threshold": 45522 },
+      "medical_threshold": { "pct_net_income": 0.03, "cap": 2834 },
+      "donation": { "tier1_limit": 200, "tier1_rate": 0.145, "tier2_rate": 0.29, "top_bracket_rate": 0.33, "carryforward_years": 5 },
+      "disability_amount": 10138,
+      "home_buyers_amount": 10000,
+      "capital_gains_inclusion": 0.5,
+      "dividends": {
+        "eligible": { "gross_up": 1.38, "fed_dtc_rate_of_grossed_up": 0.150198 },
+        "non_eligible": { "gross_up": 1.15, "fed_dtc_rate_of_grossed_up": 0.090301 }
+      },
+      "oas_clawback": { "threshold": 93454, "rate": 0.15, "_verify": true }
+    },
+    "2026": {
+      "indexation_factor": 1.02,
+      "brackets": [
+        { "upTo": 58523, "rate": 0.14 },
+        { "upTo": 117045, "rate": 0.205 },
+        { "upTo": 181440, "rate": 0.26 },
+        { "upTo": 258482, "rate": 0.29 },
+        { "upTo": null, "rate": 0.33 }
+      ],
+      "credit_rate": 0.14,
+      "bpa": { "max": 16452, "min": 14829, "phaseout_start": 181440, "phaseout_end": 258482, "_verify_min": true },
+      "capital_gains_inclusion": 0.5,
+      "_other_amounts": "index 2025 values by 1.02 as placeholder; replace with CRA published table"
+    }
+  },
+  "payroll": {
+    "2025": {
+      "cpp": { "ympe": 71300, "basic_exemption": 3500, "rate_employee": 0.0595, "max_employee": 4034.10, "rate_self_employed": 0.119 },
+      "cpp2": { "yampe": 81200, "rate_employee": 0.04, "max_employee": 396.00 },
+      "ei": { "mie": 65700, "rate_employee": 0.0164, "max_employee": 1077.48 }
+    },
+    "2026": {
+      "cpp": { "ympe": 74600, "basic_exemption": 3500, "rate_employee": 0.0595, "max_employee": 4230.45, "rate_self_employed": 0.119 },
+      "cpp2": { "yampe": 85000, "rate_employee": 0.04, "max_employee": 416.00 },
+      "ei": { "mie": 68900, "rate_employee": 0.0163, "max_employee": 1123.07 }
+    }
+  },
+  "registered_accounts": {
+    "rrsp": {
+      "earned_income_pct": 0.18,
+      "dollar_max": { "2025": 32490, "2026": 33810 },
+      "overcontribution_buffer": 2000,
+      "overcontribution_penalty_per_month": 0.01,
+      "first_60_days_prior_year_deductible": true
+    },
+    "tfsa": { "annual_limit": { "2025": 7000, "2026": 7000 }, "withdrawal_room_restored": "next_jan_1" },
+    "fhsa": { "annual_limit": 8000, "lifetime_limit": 40000, "max_carryforward": 8000, "max_account_years": 15 },
+    "resp": { "lifetime_limit_per_child": 50000, "cesg_match_rate": 0.20, "cesg_annual_matched_max": 2500 }
+  },
+  "provincial_2025": {
+    "_verify_all": true,
+    "ON": {
+      "brackets": [
+        { "upTo": 52886, "rate": 0.0505 }, { "upTo": 105775, "rate": 0.0915 },
+        { "upTo": 150000, "rate": 0.1116 }, { "upTo": 220000, "rate": 0.1216 },
+        { "upTo": null, "rate": 0.1316 }
+      ],
+      "bpa": 12747,
+      "surtax": { "tier1_threshold": 5710, "tier1_rate": 0.20, "tier2_threshold": 7307, "tier2_rate": 0.36 }
+    },
+    "BC": {
+      "brackets": [
+        { "upTo": 49279, "rate": 0.0506 }, { "upTo": 98560, "rate": 0.077 },
+        { "upTo": 113158, "rate": 0.105 }, { "upTo": 137407, "rate": 0.1229 },
+        { "upTo": 186306, "rate": 0.147 }, { "upTo": 259829, "rate": 0.168 },
+        { "upTo": null, "rate": 0.205 }
+      ],
+      "bpa": 12932
+    },
+    "AB": {
+      "brackets": [
+        { "upTo": 60000, "rate": 0.08 }, { "upTo": 151234, "rate": 0.10 },
+        { "upTo": 181481, "rate": 0.12 }, { "upTo": 241974, "rate": 0.13 },
+        { "upTo": 362961, "rate": 0.14 }, { "upTo": null, "rate": 0.15 }
+      ],
+      "bpa": 22323
+    },
+    "SK": {
+      "brackets": [ { "upTo": 53463, "rate": 0.105 }, { "upTo": 152750, "rate": 0.125 }, { "upTo": null, "rate": 0.145 } ],
+      "bpa": 19491
+    },
+    "MB": {
+      "brackets": [ { "upTo": 47564, "rate": 0.108 }, { "upTo": 101200, "rate": 0.1275 }, { "upTo": null, "rate": 0.174 } ],
+      "bpa": 15780
+    },
+    "NS": {
+      "brackets": [
+        { "upTo": 30507, "rate": 0.0879 }, { "upTo": 61015, "rate": 0.1495 },
+        { "upTo": 95883, "rate": 0.1667 }, { "upTo": 154650, "rate": 0.175 },
+        { "upTo": null, "rate": 0.21 }
+      ],
+      "bpa": 11744
+    },
+    "NB": {
+      "brackets": [
+        { "upTo": 51306, "rate": 0.094 }, { "upTo": 102614, "rate": 0.14 },
+        { "upTo": 190060, "rate": 0.16 }, { "upTo": null, "rate": 0.195 }
+      ],
+      "bpa": 13396
+    },
+    "PE": {
+      "brackets": [
+        { "upTo": 33328, "rate": 0.095 }, { "upTo": 64656, "rate": 0.1347 },
+        { "upTo": 105000, "rate": 0.166 }, { "upTo": 140000, "rate": 0.1762 },
+        { "upTo": null, "rate": 0.19 }
+      ],
+      "bpa": 14250
+    },
+    "NL": {
+      "brackets": [
+        { "upTo": 44192, "rate": 0.087 }, { "upTo": 88382, "rate": 0.145 },
+        { "upTo": 157792, "rate": 0.158 }, { "upTo": 220910, "rate": 0.178 },
+        { "upTo": 282214, "rate": 0.198 }, { "upTo": 564429, "rate": 0.208 },
+        { "upTo": 1128858, "rate": 0.213 }, { "upTo": null, "rate": 0.218 }
+      ],
+      "bpa": 11067
+    }
+  },
+  "deprecated_do_not_build": {
+    "wfh_flat_rate_per_day": "ENDED after 2022 - detailed method only (T2200 + T777)",
+    "consumer_carbon_rebate": "ENDED April 2025",
+    "capital_gains_two_thirds_inclusion": "CANCELLED - stays 0.50",
+    "lowest_fed_rate_15pct": "CUT July 2025 - use 0.145 (2025) / 0.14 (2026)"
+  }
+}
