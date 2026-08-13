@@ -1,0 +1,180 @@
+<meta charset="utf-8">
+<title>ONYX Ledger — Data Integration Playbook</title>
+<style>
+  @page { margin: 18mm 16mm; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: #111; max-width: 820px; margin: 0 auto; padding: 24px; line-height: 1.5; font-size: 14px; }
+  h1 { font-size: 24px; letter-spacing: 1px; }
+  h2 { font-size: 18px; margin-top: 32px; border-bottom: 2px solid #111; padding-bottom: 4px; }
+  h3 { font-size: 15px; margin-top: 20px; }
+  ul, ol { margin: 6px 0 12px 0; }
+  li { margin: 3px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; margin: 10px 0; }
+  th, td { border: 1px solid #999; padding: 5px 8px; text-align: left; vertical-align: top; }
+  th { background: #efefef; }
+  code, pre { font-family: 'Courier New', monospace; font-size: 12px; background: #f4f4f4; }
+  pre { padding: 10px 12px; border: 1px solid #ccc; overflow-x: auto; line-height: 1.4; white-space: pre-wrap; }
+  .warn { border-left: 4px solid #C0392B; padding: 8px 12px; margin: 10px 0; background: #fdf3f2; }
+  .key { border-left: 4px solid #1A5BA6; padding: 8px 12px; margin: 10px 0; background: #f2f6fc; }
+  .legend { border: 1px solid #999; padding: 10px 14px; background: #f7f7f7; font-size: 12.5px; margin-bottom: 22px; }
+  .pagebreak { page-break-before: always; }
+  .small { font-size: 12px; color: #444; }
+</style>
+
+<h1>DATA INTEGRATION PLAYBOOK</h1>
+<p><em>How to turn the OnyxTaxSources collection into a working system &middot; August 2026</em></p>
+
+<div class="legend">
+  <b>What this is:</b> you've collected ~49 files across 8 folders. This document says what each one is <i>for</i>,
+  how to feed them to an AI without getting garbage, and what order to build in.
+  <b>Read §1 and §2 before writing any code</b> — they contain the one architectural decision that determines
+  whether this product works or gets you sued.
+</div>
+
+<h2>1. THE ONE RULE THAT MATTERS</h2>
+
+<div class="key">
+  <b>The AI never computes tax. The engine computes tax. The AI explains what the engine computed.</b>
+</div>
+
+<p>Everything you collected splits cleanly along that line, and mixing the two sides is the single biggest failure mode in this category:</p>
+
+<table>
+  <tr><th></th><th>DETERMINISTIC SIDE (code)</th><th>LANGUAGE SIDE (AI)</th></tr>
+  <tr><td><b>Job</b></td><td>Produce numbers</td><td>Produce sentences</td></tr>
+  <tr><td><b>Fed by</b></td><td><code>tax_engine_params.json</code>, the formulas reference, T4127</td><td>The CRA guides, folios, and rate pages — as a citation corpus</td></tr>
+  <tr><td><b>Must be</b></td><td>Exact, testable, reproducible, auditable</td><td>Clear, hedged, sourced</td></tr>
+  <tr><td><b>Failure mode</b></td><td>Wrong refund → CRA reassessment</td><td>Confidently wrong advice → reputational + legal</td></tr>
+  <tr><td><b>Test by</b></td><td>Persona suite with locked expected outputs</td><td>Human review + mandatory citations</td></tr>
+</table>
+
+<p><b>Concretely:</b> when a user asks "should I put $5,000 in my RRSP?", the AI does <u>not</u> calculate the answer.
+The engine runs <code>tax(income) − tax(income − 5000)</code> and returns <code>$1,482.50</code>. The AI then writes:
+"Contributing $5,000 would reduce your tax by about $1,482 because it drops your last dollars out of the 29.65% bracket."
+The number came from code. Only the sentence came from the model.</p>
+
+<h2>2. WHAT YOU ACTUALLY HAVE — INVENTORY BY PURPOSE</h2>
+
+<table>
+  <tr><th>Folder</th><th>Role in the system</th><th>Feed to AI?</th></tr>
+  <tr><td><b>00-engine</b><br><code>tax_engine_params.json</code></td><td><b>Runtime config.</b> The engine imports this at boot. All brackets, credits, CPP/EI, RRSP limits, 12 provinces × 2 years.</td><td><b>YES</b> — small, structured, exact. This is the single best file you own.</td></tr>
+  <tr><td><b>00-engine</b><br>Formulas reference PDF</td><td><b>Implementation spec.</b> Tells the developer/AI what code to write: the pipeline, bracket function, credit math, simulator formulas.</td><td><b>YES</b> — this is the build brief.</td></tr>
+  <tr><td><b>01-legislation</b><br>Act, Regulations, budget annex</td><td><b>Ultimate authority.</b> Consulted by humans when a rule is genuinely disputed.</td><td><b>NO</b> — 5,000+ pages, will blow any context window and return noise.</td></tr>
+  <tr><td><b>02-cra-guidance</b><br>T4002, RC4022, folio index, CCA</td><td><b>Copilot corpus.</b> Plain-language explanations of rules — exactly what a Q&amp;A feature should quote from.</td><td><b>YES, chunked</b> — this is your RAG source (see §4).</td></tr>
+  <tr><td><b>03-rates-amounts</b><br>brackets, CPP, EI, RRSP/TFSA, interest, auto, meal, GST</td><td><b>Proof of the config.</b> These are the primary sources the JSON was verified against — your audit trail.</td><td><b>NO for computing</b> (use the JSON instead). Keep as evidence.</td></tr>
+  <tr><td><b>04-filing-specs</b><br>T1, ON428, worksheets, T4127, XML specs</td><td><b>Output contract + answer key.</b> T4127 is CRA's own math; the forms are what your output must reproduce line-for-line.</td><td><b>YES, selectively</b> — feed T4127 when building withholding logic, forms when mapping outputs.</td></tr>
+  <tr><td><b>05-quebec</b></td><td><b>Quarantined future scope.</b> Do not let this leak into the main engine path.</td><td><b>NO</b> — not until Quebec is a decision.</td></tr>
+  <tr><td><b>06-apis-data</b><br>FX CSV, Valet OpenAPI, Flinks</td><td><b>Live-data integration.</b> The <code>.yml</code> generates an API client; the CSV is real FX conversion data.</td><td><b>YES</b> — the OpenAPI spec especially; AI generates clients from it well.</td></tr>
+  <tr><td><b>07-monitoring</b></td><td><b>Process, not data.</b> The weekly/annual check schedule.</td><td><b>NO</b> — it's a to-do list for a human.</td></tr>
+</table>
+
+<h2 class="pagebreak">3. BUILD ORDER — WHAT TO DO WITH IT, IN SEQUENCE</h2>
+
+<h3>Step 1 — Stand up the calculator core (uses: JSON + formulas PDF)</h3>
+<p>Hand your AI tool the JSON and the formulas reference and ask for exactly this, nothing more:</p>
+<pre>Build a pure function: calculateTax(taxableIncome, province, year) -> { federalTax, provincialTax, total }
+
+Requirements:
+- Read ALL numbers from tax_engine_params.json. Hardcode nothing.
+- Implement applyBrackets() per section 1 of the formulas reference.
+- Use integer cents or a decimal type. Never floating point for money.
+- Throw a clear error if the year or province is missing from config.
+- No network calls, no AI calls, no side effects. Pure function.</pre>
+<p>This is deliberately tiny. It is also the foundation everything else sits on — if this is wrong, every feature above it is wrong.</p>
+
+<h3>Step 2 — Lock it with a persona suite (uses: T1 forms, T4127)</h3>
+<p>Before adding a single feature, build ~30 test cases with expected outputs:</p>
+<pre>single T4, $55k, ON       |  two T4s, $40k + $25k, BC
+T4 + $6k RRSP, $95k, AB   |  self-employed $80k, SK
+investor: $50k + $12k eligible dividends + $8k capital gain, ON
+senior: $70k with OAS clawback exposure, NS
+each province at $60k, $120k, $250k</pre>
+<div class="key">
+<b>How to get trustworthy expected values:</b> run the same scenarios through an existing certified product (Wealthsimple Tax is free) and record its output. Any disagreement is a bug in your engine until proven otherwise. This is the highest-leverage hour in the whole project — and it's exactly what CRA's certification test returns will do to you later, so you may as well practise now.
+</div>
+
+<h3>Step 3 — Add the simulators (uses: formulas PDF §10)</h3>
+<p>These are your differentiator and they need no certification. Critical implementation note, straight from the reference:</p>
+<pre>// WRONG - breaks when the contribution crosses a bracket:
+saving = contribution * marginalRate
+
+// RIGHT - run the full pipeline twice:
+saving = totalTax(taxableIncome) - totalTax(taxableIncome - contribution)</pre>
+<p>Build RRSP first, then FHSA (same math, different caps), then capital-gains timing.</p>
+
+<h3>Step 4 — Wire the Tax Health Score to the engine (uses: formulas PDF §11)</h3>
+<p>The score is your invention, so it has no external authority — which means its credibility rests entirely on
+its dollar figures coming from the engine you just tested. Every point lost must map to an action card whose
+"+$X" was computed, never estimated. Kill every hardcoded number from the demo (<code>82/100</code>, <code>$2,431</code>, <code>+$420</code>).</p>
+
+<h3>Step 5 — Only now, the copilot (uses: 02-cra-guidance corpus)</h3>
+<p>Built last and constrained hardest — see §4.</p>
+
+<h2>4. HOW TO BUILD THE COPILOT SO IT DOESN'T BURN YOU</h2>
+
+<p>The pattern is <b>retrieval over your corpus, never free generation</b>:</p>
+<ol>
+  <li><b>Chunk the guidance folder</b> — split T4002, RC4022, and any folios you pull into ~500-word passages with their source and page recorded.</li>
+  <li><b>Embed and index them</b> in a vector store.</li>
+  <li><b>On a user question:</b> retrieve the top passages, then prompt the model with a hard instruction — <i>answer only from these passages; cite the source; if they don't cover it, say you don't know and offer to connect a human.</i></li>
+  <li><b>Route anything numeric to the engine.</b> If the question implies a calculation ("how much would I save…"), the app calls the calculator and hands the model the result to narrate. The model never does arithmetic.</li>
+  <li><b>Log every exchange</b> — question, retrieved passages, engine outputs, final answer. That log is your defence if an answer is ever disputed.</li>
+</ol>
+
+<div class="warn">
+<b>Three hard rules for the copilot:</b>
+(1) <b>Never let it invent a number.</b> If a figure isn't from the engine or a cited passage, it doesn't ship.
+(2) <b>Label AI answers as AI</b> and keep the "not tax advice" framing consistent with your ToS.
+(3) <b>Never send more personal data than the question needs</b> — no SIN, no full income history, into a model prompt. Send the minimum, and prefer Canadian-region endpoints (see the legal checklist).
+</div>
+
+<h2 class="pagebreak">5. FEEDING FILES TO AN AI — THE TIERS</h2>
+
+<table>
+  <tr><th>Tier</th><th>Files</th><th>How</th></tr>
+  <tr><td><b>Always in context</b></td><td><code>tax_engine_params.json</code>, formulas reference</td><td>Small enough to paste whole. Include both at the start of any engine-building session.</td></tr>
+  <tr><td><b>Task-scoped</b></td><td>T4127, T1/ON428 forms, T4 XML spec, Valet <code>.yml</code></td><td>Attach only while working the matching feature. Then drop them — stale context degrades output.</td></tr>
+  <tr><td><b>Chunked into a vector store</b></td><td>T4002, RC4022, folios</td><td>Never pasted whole; retrieved passage-by-passage at question time.</td></tr>
+  <tr><td><b>Human-only, never fed</b></td><td>Income Tax Act, Regulations, forms/publications indexes, monitoring notes</td><td>Look things up by hand. Feeding these produces confident nonsense.</td></tr>
+</table>
+
+<h3>5.1 A prompt template that works</h3>
+<pre>CONTEXT: I'm building a Canadian T1 tax engine. Attached:
+  - tax_engine_params.json (verified CRA parameters, 2025 and 2026)
+  - Tax_Engine_Formulas_and_Data_REFERENCE.pdf (the spec)
+
+TASK: [one specific function]
+
+CONSTRAINTS:
+  - Every tax number comes from the JSON. Zero hardcoded values.
+  - Money in integer cents.
+  - Any parameter with "_verified": false must raise a warning, not be used silently.
+  - Write the unit tests alongside, using the persona cases in /tests.
+  - If the spec is ambiguous, ask me — do not guess a tax rule.</pre>
+<p>That last line matters more than it looks. An AI guessing a tax rule is exactly how a wrong refund reaches a real filer.</p>
+
+<h2>6. THE VERIFICATION LOOP (RUN THIS FOREVER)</h2>
+
+<table>
+  <tr><th>Trigger</th><th>Action</th></tr>
+  <tr><td>Any engine change</td><td>Rerun the persona suite. All expected values must still match.</td></tr>
+  <tr><td>Using a parameter flagged <code>_verified: false</code></td><td>Stop. Source it from CRA first, update the JSON, flip the flag, note the source page.</td></tr>
+  <tr><td>Every November</td><td>New CRA numbers publish → re-capture folder 03 → add a new year block to the JSON → rerun the suite. <b>Formulas rarely change; only the tables do.</b></td></tr>
+  <tr><td>January &amp; July</td><td>New T4127 edition → re-download → check withholding logic.</td></tr>
+  <tr><td>Weekly (from 07-monitoring)</td><td>Gazette, LEGISinfo, Finance draft legislation — tag anything new as PROPOSED, never IN_FORCE, until Royal Assent.</td></tr>
+</table>
+
+<div class="warn">
+<b>Known gaps that will block provincial tax right now:</b> the JSON does not yet contain <b>provincial basic personal amounts</b>, <b>provincial dividend tax credit rates</b>, or <b>Ontario surtax thresholds</b>. Provincial tax computes wrong without them. Source these three before anything provincial reaches a user's screen. Full list in §15.2 of the formulas reference.
+</div>
+
+<h2>7. THE FIRST WEEK, CONCRETELY</h2>
+<ol>
+  <li><b>Day 1:</b> Repo skeleton. Drop <code>tax_engine_params.json</code> into <code>/config</code>. Write the loader that reads it and refuses to boot if a required year is missing.</li>
+  <li><b>Day 2:</b> <code>applyBrackets()</code> + <code>calculateTax()</code>, federal only. Unit tests from the formulas reference worked examples.</li>
+  <li><b>Day 3:</b> Add provincial (Ontario first). Immediately hit the missing-BPA gap — go source it, update the JSON, flip the flag. <i>This teaches the whole verification discipline in one afternoon.</i></li>
+  <li><b>Day 4:</b> Build the 30-persona suite. Cross-check against a certified product. Fix what disagrees.</li>
+  <li><b>Day 5:</b> RRSP simulator using the correct two-pass formula. This is your first real user-facing feature — and it needs no certification.</li>
+</ol>
+<p>At the end of that week you have a tested calculator and a working simulator: enough to put the Tax Health Score in front of real Canadians while certification is still a year away. That's the launch path from the strategy doc, and this data collection is what makes it possible.</p>
+
+<p class="small">Companion to <i>Tax Engine Formulas &amp; Data Reference</i> (the spec), <i>tax_engine_params.json</i> (the config), and the <i>Canadian Legal Checklist</i>. Engineering guidance only — not tax or legal advice. Nothing here substitutes for NETFILE certification.</p>
