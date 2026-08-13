@@ -27,7 +27,15 @@
   <b>How to use this:</b> every formula here is deterministic — the engine is these formulas plus annual parameter tables.
   A companion file, <code>tax_engine_params.json</code>, holds the same numbers in machine-readable form so the code reads config, never hardcoded values.
   <b>Golden rule:</b> the 2025 figures apply to 2025 income (returns filed spring 2026); 2026 figures apply to income being earned now.
-  Verify every number against CRA's published tables before certification season — this document is a build reference, not a certified source.
+  <br><br>
+  <b>VERIFICATION STATUS (checked 13 August 2026):</b> federal brackets (both years), the basic personal amount and its phase-out,
+  Canada employment amount, age amount, medical threshold, disability amount, spouse amount, CPP, EI (federal and Quebec),
+  RRSP/TFSA limits, the OAS clawback thresholds, capital-gains inclusion, dividend gross-up and federal dividend tax credit rates,
+  and <b>all provincial and territorial brackets for 2025 and 2026</b> were confirmed line-by-line against CRA's published pages.
+  Items still unverified are listed in §15 and flagged <code>"_verified": false</code> in the JSON.
+  <br><br>
+  <b>This is not a compliance certification.</b> Matching CRA's published numbers does not make software CRA-certified —
+  certification is earned only by passing the CRA's own test returns during the NETFILE certification cycle.
 </div>
 
 <h2>1. THE CORE PIPELINE — HOW EVERY RETURN COMPUTES</h2>
@@ -88,36 +96,66 @@ else: bpa = bpaMax − (bpaMax − bpaMin) × (netIncome − rangeStart) / (rang
 </pre>
 
 <h3>3.2 The rest of the standard stack</h3>
+<p class="small"><b>✓ = confirmed against CRA's indexation page, 13 Aug 2026. ? = not yet verified.</b></p>
 <table>
-  <tr><th>Credit</th><th>2025 amount</th><th>Formula / rule</th></tr>
-  <tr><td>Canada Employment Amount</td><td>$1,471</td><td><code>min(1471, employmentIncome)</code> — everyone with a T4 gets it</td></tr>
-  <tr><td>CPP/QPP contributions</td><td>actual paid</td><td>base CPP contributions are a credit; the <b>enhanced</b> portion (incl. CPP2) is a <b>deduction</b> from income instead — see §5</td></tr>
-  <tr><td>EI premiums</td><td>actual paid (max $1,077.48)</td><td>credit for premiums from T4 box 18</td></tr>
-  <tr><td>Age amount (65+)</td><td>$9,028</td><td>reduced by 15% of netIncome over $45,522, to zero</td></tr>
-  <tr><td>Medical expenses</td><td>threshold-based</td><td><code>max(0, eligibleMedical − min(0.03 × netIncome, 2834))</code> — claim on either spouse; the <b>lower-income spouse usually wins</b> (lower 3% threshold). 12-month claim window ending in tax year</td></tr>
-  <tr><td>Charitable donations</td><td>two-tier</td><td><code>lowestRate × min(200, don) + 29% × amountOver200</code> (33% on the portion matching income in the 33% bracket). Combine spouses; can carry forward 5 years — <b>optimizer opportunity: pooling</b></td></tr>
-  <tr><td>Tuition (T2202)</td><td>actual</td><td>credit at lowest rate; unused amounts carry forward indefinitely or transfer up to $5,000 to parent/spouse</td></tr>
-  <tr><td>Spouse / eligible dependant</td><td>= BPA</td><td>BPA-sized amount reduced dollar-for-dollar by the dependant's net income</td></tr>
-  <tr><td>Disability (DTC)</td><td>$10,138</td><td>requires CRA-approved T2201; transferable from dependant</td></tr>
-  <tr><td>Home buyers' amount</td><td>$10,000</td><td>flat, year of first-home purchase</td></tr>
-  <tr><td>First $200 / over $200 donation rates</td><td colspan="2">first-tier uses lowest rate (14.5%/14%); keep as parameters, they moved with the 2025 rate cut</td></tr>
+  <tr><th>Credit</th><th>2025</th><th>2026</th><th>Formula / rule</th></tr>
+  <tr><td>Canada Employment Amount ✓</td><td>$1,471</td><td>$1,501</td><td><code>min(amount, employmentIncome)</code> — everyone with a T4 gets it</td></tr>
+  <tr><td>CPP/QPP contributions ✓</td><td colspan="2">actual paid</td><td>base CPP contributions are a credit; the <b>enhanced</b> portion (incl. CPP2) is a <b>deduction</b> from income instead — see §5</td></tr>
+  <tr><td>EI premiums ✓</td><td>max $1,077.48</td><td>max $1,123.07</td><td>credit for premiums from T4 box 18</td></tr>
+  <tr><td>Age amount (65+) ✓</td><td>$9,028</td><td>$9,208</td><td>reduced by 15% of netIncome over the threshold, to zero. <b>Threshold itself unverified</b> (2025 believed $45,522)</td></tr>
+  <tr><td>Medical expenses ✓</td><td>cap $2,834</td><td>cap $2,890</td><td><code>max(0, eligibleMedical − min(0.03 × netIncome, cap))</code> — claim on either spouse; the <b>lower-income spouse usually wins</b>. 12-month claim window ending in tax year</td></tr>
+  <tr><td>Disability (DTC) ✓</td><td>$10,138</td><td>$10,341</td><td>requires CRA-approved T2201; transferable from dependant</td></tr>
+  <tr><td>Spouse / common-law partner ✓</td><td>$16,129<br>($18,816 w/ caregiver)</td><td>$16,452<br>($19,192 w/ caregiver)</td><td>reduced dollar-for-dollar by the dependant's net income</td></tr>
+  <tr><td>Charitable donations ?</td><td colspan="2">two-tier</td><td><code>lowestRate × min(200, don) + 29% × amountOver200</code> (33% on the portion matching income in the 33% bracket). Carry forward 5 years — <b>optimizer opportunity: pooling</b>. Tier rates post-rate-cut not confirmed</td></tr>
+  <tr><td>Tuition (T2202) ?</td><td colspan="2">actual</td><td>credit at lowest rate; unused carries forward indefinitely or transfers up to $5,000 to parent/spouse</td></tr>
+  <tr><td>Home buyers' amount ?</td><td colspan="2">$10,000</td><td>flat statutory amount (not indexed), year of first-home purchase — not shown on the indexation page</td></tr>
 </table>
 
-<h2 class="pagebreak">4. PROVINCIAL TAX (2025 brackets — index annually)</h2>
-<p>Same <code>applyBrackets</code> function, different tables. Each province also has its own BPA and credit set (store per-province params). Quebec excluded (separate TP1 system, out of scope at launch).</p>
+<h2 class="pagebreak">4. PROVINCIAL &amp; TERRITORIAL TAX — ALL 12 JURISDICTIONS, BOTH YEARS</h2>
+<p>Same <code>applyBrackets</code> function, different tables. <b>All brackets and rates below were confirmed against CRA's current-year and last-year pages on 13 August 2026.</b> Quebec excluded (separate TP1 system via Revenu Québec).</p>
+
+<h3>4.1 — 2025 brackets (used on returns filed spring 2026)</h3>
 <table>
-  <tr><th>Province</th><th>2025 brackets → rates</th><th>2025 prov. BPA</th></tr>
-  <tr><td>Ontario</td><td>to $52,886: 5.05% &middot; to $105,775: 9.15% &middot; to $150,000: 11.16% &middot; to $220,000: 12.16% &middot; above: 13.16%</td><td>$12,747</td></tr>
-  <tr><td>British Columbia</td><td>to $49,279: 5.06% &middot; to $98,560: 7.7% &middot; to $113,158: 10.5% &middot; to $137,407: 12.29% &middot; to $186,306: 14.7% &middot; to $259,829: 16.8% &middot; above: 20.5%</td><td>$12,932</td></tr>
-  <tr><td>Alberta</td><td><b>new for 2025:</b> to $60,000: 8% &middot; to $151,234: 10% &middot; to $181,481: 12% &middot; to $241,974: 13% &middot; to $362,961: 14% &middot; above: 15%</td><td>$22,323</td></tr>
-  <tr><td>Saskatchewan</td><td>to $53,463: 10.5% &middot; to $152,750: 12.5% &middot; above: 14.5%</td><td>$19,491</td></tr>
-  <tr><td>Manitoba</td><td>to $47,564: 10.8% &middot; to $101,200: 12.75% &middot; above: 17.4%</td><td>$15,780</td></tr>
-  <tr><td>Nova Scotia</td><td>to $30,507: 8.79% &middot; to $61,015: 14.95% &middot; to $95,883: 16.67% &middot; to $154,650: 17.5% &middot; above: 21%</td><td>$11,744</td></tr>
-  <tr><td>New Brunswick</td><td>to $51,306: 9.4% &middot; to $102,614: 14% &middot; to $190,060: 16% &middot; above: 19.5%</td><td>$13,396</td></tr>
-  <tr><td>PEI</td><td>to $33,328: 9.5% &middot; to $64,656: 13.47% &middot; to $105,000: 16.6% &middot; to $140,000: 17.62% &middot; above: 19%</td><td>$14,250</td></tr>
-  <tr><td>Newfoundland &amp; Labrador</td><td>8 brackets, 8.7% (to $44,192) rising to 21.8% (over ~$1.1M)</td><td>$11,067</td></tr>
+  <tr><th>Jurisdiction</th><th>2025 brackets → rates</th></tr>
+  <tr><td>Alberta</td><td>to $60,000: 8% &middot; to $151,234: 10% &middot; to $181,481: 12% &middot; to $241,974: 13% &middot; to $362,961: 14% &middot; above: 15%</td></tr>
+  <tr><td>British Columbia</td><td>to $49,279: 5.06% &middot; to $98,560: 7.7% &middot; to $113,158: 10.5% &middot; to $137,407: 12.29% &middot; to $186,306: 14.7% &middot; to $259,829: 16.8% &middot; above: 20.5%</td></tr>
+  <tr><td>Manitoba</td><td>to $47,564: 10.8% &middot; to $101,200: 12.75% &middot; above: 17.4%</td></tr>
+  <tr><td>New Brunswick</td><td>to $51,306: 9.4% &middot; to $102,614: 14% &middot; to $190,060: 16% &middot; above: 19.5%</td></tr>
+  <tr><td>Newfoundland &amp; Labrador</td><td>to $44,192: 8.7% &middot; to $88,382: 14.5% &middot; to $157,792: 15.8% &middot; to $220,910: 17.8% &middot; to $282,214: 19.8% &middot; to $564,429: 20.8% &middot; to $1,128,858: 21.3% &middot; above: 21.8%</td></tr>
+  <tr><td>Northwest Territories</td><td>to $51,964: 5.9% &middot; to $103,930: 8.6% &middot; to $168,967: 12.2% &middot; above: 14.05%</td></tr>
+  <tr><td>Nova Scotia</td><td>to $30,507: 8.79% &middot; to $61,015: 14.95% &middot; to $95,883: 16.67% &middot; to $154,650: 17.5% &middot; above: 21%</td></tr>
+  <tr><td>Nunavut</td><td>to $54,707: 4% &middot; to $109,413: 7% &middot; to $177,881: 9% &middot; above: 11.5%</td></tr>
+  <tr><td>Ontario</td><td>to $52,886: 5.05% &middot; to $105,775: 9.15% &middot; to $150,000: 11.16% &middot; to $220,000: 12.16% &middot; above: 13.16%</td></tr>
+  <tr><td>Prince Edward Island</td><td>to $33,328: 9.5% &middot; to $64,656: 13.47% &middot; to $105,000: 16.6% &middot; to $140,000: 17.62% &middot; above: 19%</td></tr>
+  <tr><td>Saskatchewan</td><td>to $53,463: 10.5% &middot; to $152,750: 12.5% &middot; above: 14.5%</td></tr>
+  <tr><td>Yukon</td><td>to $57,375: 6.4% &middot; to $114,750: 9% &middot; to $177,882: 10.9% &middot; to $500,000: 12.8% &middot; above: 15%</td></tr>
 </table>
-<div class="warn"><b>Verify all provincial figures against each province's published 2025/2026 tables before shipping</b> — provinces index by their own factors (some, like PEI historically, don't index every amount), and Nova Scotia only began indexing in 2025. Treat this table as scaffolding.</div>
+
+<h3>4.2 — 2026 brackets (current income year)</h3>
+<table>
+  <tr><th>Jurisdiction</th><th>2026 brackets → rates</th></tr>
+  <tr><td>Alberta</td><td>to $61,200: 8% &middot; to $154,259: 10% &middot; to $185,111: 12% &middot; to $246,813: 13% &middot; to $370,220: 14% &middot; above: 15%</td></tr>
+  <tr><td>British Columbia</td><td>to $50,363: <b>5.6%</b> &middot; to $100,728: 7.7% &middot; to $115,648: 10.5% &middot; to $140,430: 12.29% &middot; to $190,405: 14.7% &middot; to $265,545: 16.8% &middot; above: 20.5%</td></tr>
+  <tr><td>Manitoba</td><td>unchanged from 2025 — to $47,564: 10.8% &middot; to $101,200: 12.75% &middot; above: 17.4%</td></tr>
+  <tr><td>New Brunswick</td><td>to $52,333: 9.4% &middot; to $104,666: 14% &middot; to $193,861: 16% &middot; above: 19.5%</td></tr>
+  <tr><td>Newfoundland &amp; Labrador</td><td>to $44,678: 8.7% &middot; to $89,354: 14.5% &middot; to $159,528: 15.8% &middot; to $223,340: 17.8% &middot; to $285,319: 19.8% &middot; to $570,638: 20.8% &middot; to $1,141,275: 21.3% &middot; above: 21.8%</td></tr>
+  <tr><td>Northwest Territories</td><td>to $53,003: 5.9% &middot; to $106,009: 8.6% &middot; to $172,346: 12.2% &middot; above: 14.05%</td></tr>
+  <tr><td>Nova Scotia</td><td>to $30,995: 8.79% &middot; to $61,991: 14.95% &middot; to $97,417: 16.67% &middot; to $157,124: 17.5% &middot; above: 21%</td></tr>
+  <tr><td>Nunavut</td><td>to $55,801: 4% &middot; to $111,602: 7% &middot; to $181,439: 9% &middot; above: 11.5%</td></tr>
+  <tr><td>Ontario</td><td>to $53,891: 5.05% &middot; to $107,785: 9.15% &middot; to $150,000: 11.16% &middot; to $220,000: 12.16% &middot; above: 13.16%</td></tr>
+  <tr><td>Prince Edward Island</td><td><b>6 brackets now:</b> to $33,928: 9.5% &middot; to $65,820: 13.47% &middot; to $106,890: 16.6% &middot; to $142,520: 17.62% &middot; to $200,000: 19% &middot; above: <b>20% (new)</b></td></tr>
+  <tr><td>Saskatchewan</td><td>to $54,532: 10.5% &middot; to $155,805: 12.5% &middot; above: 14.5%</td></tr>
+  <tr><td>Yukon</td><td>mirrors federal thresholds — to $58,523: 6.4% &middot; to $117,045: 9% &middot; to $181,440: 10.9% &middot; to $500,000: 12.8% &middot; above: 15%</td></tr>
+</table>
+
+<div class="warn">
+<b>Three things to note in the 2026 tables:</b>
+(1) <b>British Columbia's lowest rate reads 5.6% for 2026 versus 5.06% for 2025</b> — that is a rate change, not indexation. Re-confirm on BC's own page before this touches a user's number.
+(2) <b>PEI added a sixth bracket</b> with a new 20% top rate above $200,000.
+(3) <b>Manitoba did not index</b> — its 2026 thresholds are identical to 2025.
+<br><br>
+<b>Still missing for provincial tax:</b> provincial basic personal amounts, provincial dividend tax credit rates, and Ontario's surtax thresholds. Provincial tax cannot be computed correctly without these — source them per province before shipping.
+</div>
 
 <h3>4.1 Ontario surtax — the one weird extra formula</h3>
 <pre>
@@ -246,7 +284,7 @@ score = Σ weightedComponents, scaled to 0–100:
 <h2>12. INCOME-TESTED CLAWBACKS (needed for accurate marginal rates)</h2>
 <table>
   <tr><th>Program</th><th>2025 parameters</th><th>Formula</th></tr>
-  <tr><td>OAS recovery tax</td><td>threshold ≈ $93,454 (verify)</td><td><code>clawback = 0.15 × max(0, netIncome − threshold)</code>, to 100% of OAS</td></tr>
+  <tr><td>OAS recovery tax ✓</td><td><b>2025: $93,454</b> (recovery period Jul 2026–Jun 2027)<br><b>2026: $95,323</b> (Jul 2027–Jun 2028)</td><td><code>clawback = 0.15 × max(0, netIncome − threshold)</code>, to 100% of OAS. Rate confirmed at 15%.</td></tr>
   <tr><td>Canada Child Benefit</td><td>base $7,997/child &lt;6, $6,748 ages 6–17 (2025-26 year)</td><td>reduced by family-income tiers — implement CRA's published phase-out table; RRSP deductions raise CCB (simulator hook)</td></tr>
   <tr><td>GST/HST credit &amp; CWB</td><td>CRA tables</td><td>refundable; phase in/out by family net income — table-driven, revisit annually</td></tr>
 </table>
@@ -267,4 +305,39 @@ score = Σ weightedComponents, scaled to 0–100:
   <li><b>Every computed number carries provenance:</b> store which formula + which parameters produced it, so the UI can show "why" (trust feature) and support can debug (liability feature).</li>
 </ul>
 
-<p class="small">Prepared August 2026 from CRA-published 2025 figures and announced 2026 indexation (factor 2.0%). Provincial tables, clawback thresholds marked "verify," and all credit amounts must be re-validated against official CRA / provincial publications each November before the filing season. This document is an engineering reference, not tax advice.</p>
+<h2 class="pagebreak">15. VERIFICATION LEDGER</h2>
+<h3>15.1 Confirmed against CRA published pages (13 August 2026)</h3>
+<table>
+  <tr><th>Item</th><th>Source page</th></tr>
+  <tr><td>Federal brackets, 2025 and 2026</td><td>tax-rates-brackets/current-year + last-year</td></tr>
+  <tr><td>All 12 provincial/territorial bracket sets, both years</td><td>same two pages</td></tr>
+  <tr><td>BPA max and min, both years; phase-out range</td><td>indexation adjustment page</td></tr>
+  <tr><td>Canada employment amount, age amount, medical cap, disability amount, spouse amount — both years</td><td>indexation adjustment page</td></tr>
+  <tr><td>Indexation factors (2.7% for 2025, 2.0% for 2026)</td><td>indexation adjustment page</td></tr>
+  <tr><td>CPP: YMPE, exemption, rate, maximum — both years</td><td>CPP contribution rates page</td></tr>
+  <tr><td>EI federal and Quebec: MIE, rate, maximum — both years</td><td>EI premium rates page</td></tr>
+  <tr><td>RRSP dollar limits (incl. 2027 = $35,390), TFSA, YMPE/YAMPE</td><td>MP/RRSP/TFSA limits page</td></tr>
+  <tr><td>OAS recovery threshold and 15% rate, both years</td><td>OAS recovery tax page</td></tr>
+  <tr><td>Dividend gross-ups (38% / 15%) and federal DTC factors (15.0198% / 9.0301%)</td><td>cross-checked, 2025</td></tr>
+  <tr><td>Capital gains inclusion rate 50%</td><td>confirmed — 2/3 proposal cancelled</td></tr>
+</table>
+
+<h3>15.2 Still unverified — do not ship a user-facing number using these</h3>
+<ul>
+  <li><b>Provincial basic personal amounts</b> (all provinces, both years) — provincial tax is wrong without them</li>
+  <li><b>Provincial dividend tax credit rates</b> (all provinces)</li>
+  <li><b>Ontario surtax thresholds</b> (2025 and 2026) and the Ontario low-income reduction / LIFT credit</li>
+  <li><b>Age amount income threshold</b> — the point at which the 15% reduction begins</li>
+  <li><b>Donation tier rates</b> as they apply after the July 2025 rate cut</li>
+  <li><b>CPP2</b> — YAMPE, rate, and maximum sit on a separate CRA page not yet captured</li>
+  <li><b>FHSA and RESP</b> parameters</li>
+  <li><b>Home buyers' amount</b></li>
+  <li><b>CCB, GST/HST credit, Canada Workers Benefit</b> phase-out tables — not modelled in this document at all</li>
+  <li><b>British Columbia's 2026 lowest rate</b> (5.6% vs 5.06%) — flagged as a probable real rate change, needs confirmation</li>
+</ul>
+
+<div class="warn">
+<b>On the word "legal."</b> Every figure in §15.1 now matches what the CRA publishes. That makes the data <i>accurate</i>; it does not make the software <i>compliant</i>. Legal authority to file returns comes from NETFILE certification — passing the CRA's own test returns each year — and nothing in this document substitutes for that. Treat this as the engineering spec you build against, then let the CRA's test suite be the judge.
+</div>
+
+<p class="small">Prepared August 2026; verification pass completed 13 August 2026 against CRA-published pages. Every figure must be re-validated each November when CRA publishes the following year's indexed amounts, and again before each certification cycle. This document is an engineering reference, not tax advice.</p>
