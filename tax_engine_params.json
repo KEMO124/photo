@@ -10,7 +10,8 @@
       "canada.ca/.../adjustment-personal-income-tax-benefit-amounts.html",
       "canada.ca/.../cpp-contribution-rates-maximums-exemptions.html",
       "canada.ca/.../ei-premium-rates-maximums.html",
-      "canada.ca/.../old-age-security/recovery-tax.html"
+      "canada.ca/.../old-age-security/recovery-tax.html",
+      "canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/calculating-deductions/making-deductions/second-additional-cpp-contribution-rates-maximums.html"
     ],
     "NOT_A_COMPLIANCE_CERTIFICATION": "Matching these numbers does not make software CRA-certified. NETFILE certification is earned only by passing the CRA's own test returns. This file is a build reference.",
     "notes": [
@@ -90,14 +91,24 @@
     "2025": {
       "_verified": true,
       "cpp": { "ympe": 71300, "basic_exemption": 3500, "rate_employee": 0.0595, "max_employee": 4034.10, "rate_self_employed": 0.119 },
-      "cpp2": { "yampe": 81200, "rate_employee": 0.04, "max_employee": 396.00, "_verified": false },
+      "cpp2": {
+        "yampe": 81200, "rate_employee": 0.04, "max_employee": 396.00, "max_employer": 396.00,
+        "rate_self_employed": 0.08, "max_self_employed": 792.00,
+        "_verified": true,
+        "_note": "CPP2 applies only to earnings between YMPE ($71,300) and YAMPE ($81,200). No basic exemption applies to CPP2."
+      },
       "ei": { "mie": 65700, "rate_employee": 0.0164, "max_employee": 1077.48 },
       "ei_quebec": { "mie": 65700, "rate_employee": 0.0131, "max_employee": 860.67 }
     },
     "2026": {
       "_verified": true,
       "cpp": { "ympe": 74600, "basic_exemption": 3500, "rate_employee": 0.0595, "max_employee": 4230.45, "rate_self_employed": 0.119 },
-      "cpp2": { "yampe": 85000, "rate_employee": 0.04, "max_employee": 416.00, "_verified": false },
+      "cpp2": {
+        "yampe": 85000, "rate_employee": 0.04, "max_employee": 416.00, "max_employer": 416.00,
+        "rate_self_employed": 0.08, "max_self_employed": 832.00,
+        "_verified": true,
+        "_note": "CPP2 applies only to earnings between YMPE ($74,600) and YAMPE ($85,000). No basic exemption applies to CPP2."
+      },
       "ei": { "mie": 68900, "rate_employee": 0.0163, "max_employee": 1123.07 },
       "ei_quebec": { "mie": 68900, "rate_employee": 0.0130, "max_employee": 895.70 }
     },
@@ -235,7 +246,6 @@
     "Ontario surtax thresholds for 2025 and 2026, and the Ontario low-income reduction (LIFT)",
     "Age amount income threshold (the reduction start point)",
     "Donation tier rates as applied post-2025 rate cut",
-    "CPP2 (YAMPE, rate, maximum) - the CRA CPP page links these to a separate page not yet captured",
     "FHSA and RESP parameters",
     "Home buyers amount",
     "Canada Child Benefit, GST/HST credit, and Canada Workers Benefit phase-out tables (not modelled here at all)"
