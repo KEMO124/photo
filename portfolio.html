@@ -1,0 +1,767 @@
+<title>Onyx Automation Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@85..125,400..800&family=Source+Serif+4:opsz,wght@8..60,400..600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --paper:#EAEDE9;
+  --raised:#F6F8F4;
+  --panel:#E1E6E0;
+  --ink:#111917;
+  --ink-soft:#47544F;
+  --ink-faint:#78847E;
+  --rule:#CBD3CC;
+  --rule-soft:#DCE2DB;
+  --verd:#12655A;
+  --verd-bright:#12655A;
+  --verd-wash:#DCE8E4;
+  --amber:#9A6414;
+  --amber-wash:#EDE3D2;
+  --shadow:0 1px 0 rgba(17,25,23,.06), 0 12px 32px -24px rgba(17,25,23,.5);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0C1211;
+    --raised:#121A18;
+    --panel:#161F1D;
+    --ink:#E7EDE8;
+    --ink-soft:#A2AEA8;
+    --ink-faint:#77837D;
+    --rule:#243130;
+    --rule-soft:#1B2523;
+    --verd:#54C4AC;
+    --verd-bright:#6FD8C0;
+    --verd-wash:#12211F;
+    --amber:#D2A05B;
+    --amber-wash:#211B12;
+    --shadow:0 1px 0 rgba(255,255,255,.03), 0 16px 40px -28px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0C1211;
+  --raised:#121A18;
+  --panel:#161F1D;
+  --ink:#E7EDE8;
+  --ink-soft:#A2AEA8;
+  --ink-faint:#77837D;
+  --rule:#243130;
+  --rule-soft:#1B2523;
+  --verd:#54C4AC;
+  --verd-bright:#6FD8C0;
+  --verd-wash:#12211F;
+  --amber:#D2A05B;
+  --amber-wash:#211B12;
+  --shadow:0 1px 0 rgba(255,255,255,.03), 0 16px 40px -28px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  font-size:17px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  margin:0;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px 96px;}
+.prose{max-width:66ch;}
+
+h1,h2,h3,h4,.mono,.eyebrow,.chip,.lane-label,.metric,nav,.btn{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;}
+h1,h2,h3{text-wrap:balance;margin:0;}
+.mono,.eyebrow,.chip,.lane-label,.rail dt,.rail dd,.stamp{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;}
+
+.eyebrow{
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-faint);font-weight:500;
+}
+
+/* ---------- masthead ---------- */
+.masthead{border-bottom:1px solid var(--rule);padding:38px 0 0;}
+.brandbar{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px 20px;justify-content:space-between;}
+.wordmark{
+  font-family:Archivo,sans-serif;font-weight:800;
+  font-stretch:118%;font-size:19px;letter-spacing:.02em;
+  display:flex;align-items:center;gap:10px;
+}
+.wordmark .glyph{
+  width:13px;height:13px;background:var(--verd);
+  transform:rotate(45deg);display:inline-block;flex:none;
+}
+.brandbar .stamp{font-size:11px;color:var(--ink-faint);letter-spacing:.08em;}
+
+.lede{padding:60px 0 52px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:56px;align-items:end;}
+h1{
+  font-weight:800;font-stretch:112%;
+  font-size:clamp(34px,5.4vw,60px);line-height:1.02;letter-spacing:-.021em;
+}
+h1 em{font-style:normal;color:var(--verd);}
+.lede p{color:var(--ink-soft);font-size:18px;margin:0;}
+.lede p + p{margin-top:14px;}
+
+/* ---------- index ---------- */
+.index{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:24px 0 26px;}
+.index ol{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:1px 28px;grid-template-columns:repeat(3,minmax(0,1fr));}
+.index a{
+  display:flex;gap:12px;align-items:baseline;padding:9px 0;
+  text-decoration:none;color:var(--ink);border-bottom:1px solid var(--rule-soft);
+}
+.index a:hover{color:var(--verd);}
+.index .num{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;}
+.index .ttl{font-family:Archivo,sans-serif;font-weight:600;font-size:14.5px;font-stretch:102%;line-height:1.3;}
+
+/* ---------- principles ---------- */
+.principles{padding:56px 0 8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:34px;}
+.principle h3{font-size:16px;font-weight:700;font-stretch:106%;margin-bottom:6px;letter-spacing:-.005em;}
+.principle p{margin:0;font-size:15.5px;color:var(--ink-soft);}
+.principle .bar{width:34px;height:3px;background:var(--verd);margin-bottom:16px;}
+
+/* ---------- work sections ---------- */
+.work{padding-top:26px;}
+section.case{
+  padding:64px 0;border-top:1px solid var(--rule);
+  display:grid;grid-template-columns:190px minmax(0,1fr);gap:48px;
+}
+.rail{position:sticky;top:24px;align-self:start;}
+.rail .code{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.1em;
+  color:var(--verd);font-weight:600;display:block;margin-bottom:18px;
+}
+.rail dl{margin:0;border-top:1px solid var(--rule-soft);}
+.rail dt{
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-faint);margin-top:13px;
+}
+.rail dd{margin:2px 0 12px;font-size:12px;line-height:1.5;color:var(--ink-soft);}
+
+.case h2{
+  font-weight:800;font-stretch:110%;font-size:clamp(25px,3.2vw,34px);
+  line-height:1.08;letter-spacing:-.016em;margin-bottom:8px;
+}
+.case .sub{color:var(--verd);font-size:15px;font-weight:600;font-family:Archivo,sans-serif;margin:0 0 26px;}
+.case h3{
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);
+  font-weight:600;margin:34px 0 10px;font-family:"IBM Plex Mono",monospace;
+}
+.case p{margin:0 0 15px;}
+.case p:last-child{margin-bottom:0;}
+
+.build{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:0;}
+.build li{
+  padding:13px 0 13px 26px;border-bottom:1px solid var(--rule-soft);
+  position:relative;font-size:16px;
+}
+.build li:first-child{border-top:1px solid var(--rule-soft);}
+.build li::before{
+  content:"";position:absolute;left:2px;top:23px;
+  width:9px;height:1.5px;background:var(--verd);
+}
+.build strong{font-weight:600;font-family:Archivo,sans-serif;font-size:15px;font-stretch:104%;}
+
+/* ---------- flow ---------- */
+.flow{
+  background:var(--raised);border:1px solid var(--rule);
+  padding:22px 24px 24px;margin:28px 0 4px;box-shadow:var(--shadow);
+}
+.lane + .lane{margin-top:20px;padding-top:20px;border-top:1px dashed var(--rule);}
+.lane-label{
+  font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;
+  display:inline-block;margin-bottom:11px;
+}
+.lane--before .lane-label{color:var(--amber);}
+.lane--after .lane-label{color:var(--verd);}
+.chain{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:7px 4px;}
+.chain li{display:flex;align-items:center;gap:4px;}
+.chain .chip{
+  font-size:11.5px;font-family:"IBM Plex Mono",monospace;line-height:1.35;
+  padding:6px 10px;border:1px solid var(--rule);border-radius:2px;
+  display:inline-block;color:var(--ink-soft);background:var(--paper);
+}
+.lane--before .chip{border-style:dashed;border-color:var(--amber);background:var(--amber-wash);color:var(--ink);}
+.lane--after .chip{border-color:var(--verd);background:var(--verd-wash);color:var(--ink);}
+.chain li:not(:last-child)::after{
+  content:"→";font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-faint);padding:0 3px;
+}
+.lane--after .chain li:not(:last-child)::after{color:var(--verd);}
+.flow figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:16px;font-family:"IBM Plex Mono",monospace;line-height:1.6;}
+
+/* ---------- flagship ---------- */
+.flagship{
+  background:var(--panel);border:1px solid var(--rule);
+  margin-top:64px;padding:52px 44px 48px;box-shadow:var(--shadow);
+}
+.flagship .banner{
+  display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;
+  border-bottom:1px solid var(--rule);padding-bottom:18px;margin-bottom:30px;
+}
+.flagship .banner .tag{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--paper);background:var(--verd);padding:4px 9px;font-weight:600;
+}
+.flagship h2{font-weight:800;font-stretch:114%;font-size:clamp(28px,3.6vw,40px);line-height:1.05;letter-spacing:-.018em;}
+.flagship .sub{color:var(--verd);font-family:Archivo,sans-serif;font-weight:600;font-size:16px;margin:10px 0 0;}
+.fl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 44px;margin-top:34px;}
+.module{border-top:2px solid var(--verd);padding-top:14px;}
+.module h4{font-family:Archivo,sans-serif;font-size:15.5px;font-weight:700;font-stretch:104%;margin:0 0 6px;}
+.module p{margin:0;font-size:15px;color:var(--ink-soft);}
+
+/* ---------- process ---------- */
+.process{border-top:1px solid var(--rule);margin-top:72px;padding-top:56px;}
+.steps{list-style:none;counter-reset:s;margin:32px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:26px;}
+.steps li{counter-increment:s;border-top:1px solid var(--rule);padding-top:14px;}
+.steps li::before{
+  content:counter(s,decimal-leading-zero);display:block;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--verd);
+  font-weight:600;margin-bottom:9px;font-variant-numeric:tabular-nums;
+}
+.steps h4{font-family:Archivo,sans-serif;font-size:14.5px;font-weight:700;margin:0 0 5px;font-stretch:104%;}
+.steps p{margin:0;font-size:14px;color:var(--ink-soft);line-height:1.5;}
+
+/* ---------- stack + cta ---------- */
+.stack{margin-top:60px;border-top:1px solid var(--rule);padding-top:40px;}
+.stack .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;}
+.stack .chips span{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;padding:6px 10px;
+  border:1px solid var(--rule);color:var(--ink-soft);border-radius:2px;
+}
+.cta{
+  margin-top:64px;border:1px solid var(--verd);background:var(--verd-wash);
+  padding:44px 44px 40px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);
+  gap:40px;align-items:center;
+}
+.cta h2{font-weight:800;font-stretch:112%;font-size:clamp(24px,3vw,32px);line-height:1.08;letter-spacing:-.015em;}
+.cta p{margin:12px 0 0;color:var(--ink-soft);font-size:16px;}
+.btn{
+  display:inline-block;background:var(--verd);color:var(--paper);
+  text-decoration:none;font-weight:700;font-size:14px;font-stretch:104%;
+  padding:14px 22px;letter-spacing:.01em;border:1px solid var(--verd);
+}
+.btn:hover{background:transparent;color:var(--verd);}
+.contact{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-soft);margin-top:14px;line-height:1.7;}
+footer{margin-top:56px;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:space-between;}
+footer p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-faint);letter-spacing:.06em;}
+
+a:focus-visible,.index a:focus-visible{outline:2px solid var(--verd);outline-offset:3px;}
+
+.reveal{opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.in{opacity:1;transform:none;}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none;}
+}
+
+@media (max-width:960px){
+  .lede{grid-template-columns:1fr;gap:28px;padding:44px 0 40px;}
+  .index ol{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .principles{grid-template-columns:1fr;gap:26px;padding-top:44px;}
+  section.case{grid-template-columns:1fr;gap:26px;padding:48px 0;}
+  .rail{position:static;}
+  .rail dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px;}
+  .fl-grid{grid-template-columns:1fr;gap:24px;}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .cta{grid-template-columns:1fr;gap:24px;padding:34px 26px;}
+  .flagship{padding:36px 24px 34px;}
+}
+@media (max-width:600px){
+  body{font-size:16.5px;}
+  .wrap{padding:0 18px 72px;}
+  .index ol{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr;}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="brandbar">
+      <div class="wordmark"><span class="glyph" aria-hidden="true"></span>ONYX AUTOMATION</div>
+      <div class="stamp">SELECTED WORK &middot; OPERATIONS &amp; AI SYSTEMS &middot; 2026</div>
+    </div>
+
+    <div class="lede">
+      <h1>We take the work that eats your week and hand it back <em>done.</em></h1>
+      <div>
+        <p>Most small businesses don't lose time to hard problems. They lose it to the same twenty minutes repeated forty times a day — retyping an order that arrived as a PDF, rebuilding a quote from a price list, copying a lab result into a certificate, chasing a number that lives in a database nobody can query.</p>
+        <p>We build the systems that absorb that work: intake, decision rules, the write-back into whatever software you already run, and a clean exception path for the cases a person genuinely needs to see. Below is what we've built, and what changed for the people who run it.</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="index" aria-label="Portfolio contents">
+    <span class="eyebrow">Contents</span>
+    <ol>
+      <li><a href="#sales-orders"><span class="num">01</span><span class="ttl">Sales Order Automation</span></a></li>
+      <li><a href="#quotations"><span class="num">02</span><span class="ttl">Quotation Automation</span></a></li>
+      <li><a href="#database-ai"><span class="num">03</span><span class="ttl">Database AI Integration</span></a></li>
+      <li><a href="#quality-lab"><span class="num">04</span><span class="ttl">Quality Lab Automation</span></a></li>
+      <li><a href="#social"><span class="num">05</span><span class="ttl">Social Media Automation</span></a></li>
+      <li><a href="#taxos"><span class="num">06</span><span class="ttl">AI Tax Auditing Engine &mdash; our own SaaS</span></a></li>
+    </ol>
+  </nav>
+
+  <section class="principles" aria-label="How we build">
+    <div class="principle reveal">
+      <div class="bar" aria-hidden="true"></div>
+      <h3>Rules decide. AI reads.</h3>
+      <p>The AI extracts, matches and explains. Prices, tax, spec limits and eligibility are computed by deterministic rules you can read and test. Nothing critical is left to a model's guess.</p>
+    </div>
+    <div class="principle reveal">
+      <div class="bar" aria-hidden="true"></div>
+      <h3>Exceptions go to humans.</h3>
+      <p>Automation handles the ninety percent that's routine and routes the rest to a person with the source document beside it. Your team stops doing data entry and starts doing judgment.</p>
+    </div>
+    <div class="principle reveal">
+      <div class="bar" aria-hidden="true"></div>
+      <h3>Everything leaves a trace.</h3>
+      <p>Every automated action records what it saw, what rule it applied and what it wrote. When an auditor, a customer or your accountant asks why, the answer is one click away.</p>
+    </div>
+  </section>
+
+  <div class="work">
+
+    <!-- 01 -->
+    <section class="case reveal" id="sales-orders">
+      <aside class="rail">
+        <span class="code">SVC / 01</span>
+        <dl>
+          <dt>Discipline</dt><dd>Order-to-cash operations</dd>
+          <dt>Intake</dt><dd>Email, PDF, WhatsApp, customer portals, spreadsheets</dd>
+          <dt>Writes to</dt><dd>ERP / accounting system of record</dd>
+          <dt>Human role</dt><dd>Approves exceptions only</dd>
+        </dl>
+      </aside>
+      <div>
+        <h2>Sales Order Automation</h2>
+        <p class="sub">Orders that arrive as documents, entered as data — without anyone retyping them.</p>
+
+        <div class="prose">
+          <h3>The situation</h3>
+          <p>Orders reached the client in every format a customer felt like using: a PDF purchase order attached to an email, a photo of a signed order form on WhatsApp, a line item scribbled in the body of a message, a spreadsheet export from a larger buyer's procurement system. Every one of them ended the same way — a person opening the ERP and typing it in by hand.</p>
+          <p>That created three costs the business felt but couldn't isolate. Orders sat unentered for hours or overnight, so stock was allocated late and shipments slipped a day. Typos in SKUs and quantities produced wrong shipments, credit notes and returns that cost far more than the original order was worth. And every peak season meant hiring temporary help just to keep up with data entry, because the process scaled with headcount and nothing else.</p>
+
+          <h3>What we built</h3>
+          <ul class="build">
+            <li><strong>A single intake layer.</strong> One monitored inbox, plus WhatsApp and portal connections, so every incoming order lands in one queue regardless of how the customer chose to send it.</li>
+            <li><strong>Document understanding.</strong> AI extraction reads PDFs, scans, photos and message text into structured line items — customer, product, quantity, requested date, delivery address, reference number.</li>
+            <li><strong>Catalogue matching that learns.</strong> Customers describe products in their own words, not the client's SKUs. The system matches free-text descriptions against the real catalogue and remembers each customer's aliases, so "12mm ply, 8x4, B grade" resolves to the correct part every time after the first.</li>
+            <li><strong>Validation before anything is written.</strong> Price checked against the contracted tier, quantity against minimum order and pack size, availability against live stock, and the account against credit limit and unpaid balance.</li>
+            <li><strong>Write-back into the system of record.</strong> Clean orders are created directly in the ERP, with the original document attached to the order so the source is always one click away.</li>
+            <li><strong>An exception desk.</strong> Anything ambiguous — a discontinued item, a price mismatch, an unreadable scan, an over-limit account — is routed to a person with the source document and the system's best interpretation side by side, for a one-click confirm or correct.</li>
+          </ul>
+
+          <figure class="flow">
+            <div class="lane lane--before">
+              <span class="lane-label">Before</span>
+              <ol class="chain">
+                <li><span class="chip">PO arrives</span></li>
+                <li><span class="chip">Sits in inbox</span></li>
+                <li><span class="chip">Staff reads it</span></li>
+                <li><span class="chip">Looks up SKUs</span></li>
+                <li><span class="chip">Checks price list</span></li>
+                <li><span class="chip">Types into ERP</span></li>
+                <li><span class="chip">Errors found at picking</span></li>
+              </ol>
+            </div>
+            <div class="lane lane--after">
+              <span class="lane-label">After</span>
+              <ol class="chain">
+                <li><span class="chip">PO arrives</span></li>
+                <li><span class="chip">Parsed &amp; matched</span></li>
+                <li><span class="chip">Priced &amp; credit-checked</span></li>
+                <li><span class="chip">Order created in ERP</span></li>
+                <li><span class="chip">Exceptions only → human</span></li>
+              </ol>
+            </div>
+            <figcaption>Seven manual steps become one automated path with a single human checkpoint, reached only when the order is genuinely unclear.</figcaption>
+          </figure>
+
+          <h3>What it changed</h3>
+          <p>Orders now enter the system in minutes from arrival instead of waiting for someone to get to them, which pulls the entire picking, packing and invoicing chain forward — the business gets paid sooner on the same sales. Errors that used to surface in the warehouse now surface at intake, where fixing them costs a click instead of a return shipment. And because the workload no longer scales with headcount, the client absorbs seasonal peaks with the same team, while the people who used to key in orders spend that time on customers instead.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="case reveal" id="quotations">
+      <aside class="rail">
+        <span class="code">SVC / 02</span>
+        <dl>
+          <dt>Discipline</dt><dd>Pre-sales &amp; pricing</dd>
+          <dt>Intake</dt><dd>RFQ emails, web forms, spec sheets</dd>
+          <dt>Encodes</dt><dd>Cost build-up, margin &amp; discount rules</dd>
+          <dt>Output</dt><dd>Branded quote, approval trail, follow-up</dd>
+        </dl>
+      </aside>
+      <div>
+        <h2>Quotation Automation</h2>
+        <p class="sub">Same-day quotes, priced by the rules the business actually agreed to.</p>
+
+        <div class="prose">
+          <h3>The situation</h3>
+          <p>Quoting was the client's slowest and most valuable process at the same time. A request for quote came in, and someone senior had to dig through supplier cost sheets, look up what this customer paid last time, apply a discount from memory, work out freight, build the document, and send it. It took days when they were busy — and buyers who wait days often buy from whoever answered first.</p>
+          <p>Worse, the margin discipline lived in one or two people's heads. Different staff quoted the same job at different prices. Discounts got granted that nobody had authorised. Quotes went out and then sat, unfollowed, until they quietly expired, and no one could say what the win rate actually was or which quotes were lost on price.</p>
+
+          <h3>What we built</h3>
+          <ul class="build">
+            <li><strong>RFQ parsing.</strong> Incoming requests — email text, attached spec sheets, drawings and bills of materials — are read into a structured list of what's being asked for, with quantities and specifications.</li>
+            <li><strong>Automatic cost build-up.</strong> Each line is priced from live supplier and internal cost data, with freight, currency conversion, packaging and any surcharge logic applied rather than estimated.</li>
+            <li><strong>The pricing rules, written down.</strong> Volume breaks, customer tiers, contract pricing, minimum margins and approved discount ranges are encoded once, so every quote from every person applies the same policy.</li>
+            <li><strong>Guardrail approvals.</strong> A quote inside policy goes out immediately. Anything below the margin floor or outside the discount band routes to a manager with the numbers and the reason it was flagged.</li>
+            <li><strong>Generated documents.</strong> A branded, correctly formatted quotation is produced automatically — line items, terms, validity period, reference number — ready to send or e-sign.</li>
+            <li><strong>Acceptance and follow-up.</strong> Open quotes get automatic reminders on a schedule, and an accepted quote converts straight into a sales order without re-entry.</li>
+          </ul>
+
+          <figure class="flow">
+            <div class="lane lane--before">
+              <span class="lane-label">Before</span>
+              <ol class="chain">
+                <li><span class="chip">RFQ received</span></li>
+                <li><span class="chip">Wait for the estimator</span></li>
+                <li><span class="chip">Hunt cost sheets</span></li>
+                <li><span class="chip">Margin from memory</span></li>
+                <li><span class="chip">Build doc by hand</span></li>
+                <li><span class="chip">Send &amp; forget</span></li>
+              </ol>
+            </div>
+            <div class="lane lane--after">
+              <span class="lane-label">After</span>
+              <ol class="chain">
+                <li><span class="chip">RFQ parsed</span></li>
+                <li><span class="chip">Costed from live data</span></li>
+                <li><span class="chip">Rules applied</span></li>
+                <li><span class="chip">Quote generated</span></li>
+                <li><span class="chip">Approval if outside policy</span></li>
+                <li><span class="chip">Auto follow-up → order</span></li>
+              </ol>
+            </div>
+            <figcaption>Pricing policy moves out of individual memory and into the system, where it is applied identically on every quote and logged on every exception.</figcaption>
+          </figure>
+
+          <h3>What it changed</h3>
+          <p>The client now answers most quote requests the same day they arrive, which in a competitive bid is frequently the whole difference. Margin stopped leaking through informal discounting, because every price below the floor requires a decision by someone entitled to make it — and that decision is recorded. Nothing expires unnoticed: open quotes chase themselves, and accepted ones become orders without a second round of typing. For the first time the business can see, by customer and by product line, what it quotes, what it wins, and what it loses.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="case reveal" id="database-ai">
+      <aside class="rail">
+        <span class="code">SVC / 03</span>
+        <dl>
+          <dt>Discipline</dt><dd>Data access &amp; reporting</dd>
+          <dt>Sits over</dt><dd>ERP tables, SQL databases, warehouses, spreadsheets</dd>
+          <dt>Access model</dt><dd>Read-only, permission-scoped</dd>
+          <dt>Guarantee</dt><dd>Every answer shows its query</dd>
+        </dl>
+      </aside>
+      <div>
+        <h2>Database AI Integration</h2>
+        <p class="sub">The business asks a question in plain language. The database answers it, and shows its working.</p>
+
+        <div class="prose">
+          <h3>The situation</h3>
+          <p>The client's operational history — every order, product, customer, movement and invoice — sat in their database, and almost nobody could reach it. Answering "which customers ordered less this quarter than last?" meant asking the one person who could write a query, or exporting to a spreadsheet and pivoting by hand. Requests queued behind that person. Reports that took an hour to build got built once and then went stale.</p>
+          <p>So decisions got made on instinct and on whatever the standard monthly report happened to show. The data existed, was accurate, and was effectively unavailable to the people whose decisions depended on it.</p>
+
+          <h3>What we built</h3>
+          <ul class="build">
+            <li><strong>A semantic layer in the company's own vocabulary.</strong> We mapped the terms the business actually uses — "active customer", "net margin", "overdue", "slow-moving" — onto the real tables and columns, with the definitions agreed once and applied consistently everywhere.</li>
+            <li><strong>Natural-language querying with hard limits.</strong> Questions are translated into SQL against that model, executed read-only, and bounded by row limits and timeouts. The system cannot write, delete or alter anything.</li>
+            <li><strong>Permission-aware answers.</strong> Access follows the person asking. A sales rep sees their own accounts; a manager sees the region; payroll and cost data stay behind their existing permissions.</li>
+            <li><strong>Answers that show the query.</strong> Every result displays the SQL that produced it and the rows it came from. Numbers are never generated by the model — they're returned by the database, and anyone can verify how.</li>
+            <li><strong>Charts and exports on demand.</strong> Results render as tables or charts and drop into a spreadsheet or a slide without a rebuild.</li>
+            <li><strong>Scheduled watchlists.</strong> Recurring questions run themselves — Monday's slow-moving stock, this week's customers trending down, anything overdue past terms — and arrive by email or chat before someone has to think to ask.</li>
+          </ul>
+
+          <figure class="flow">
+            <div class="lane lane--before">
+              <span class="lane-label">Before</span>
+              <ol class="chain">
+                <li><span class="chip">Question arises</span></li>
+                <li><span class="chip">Ask the one technical person</span></li>
+                <li><span class="chip">Wait in the queue</span></li>
+                <li><span class="chip">CSV export</span></li>
+                <li><span class="chip">Pivot in Excel</span></li>
+                <li><span class="chip">Answer, days later</span></li>
+              </ol>
+            </div>
+            <div class="lane lane--after">
+              <span class="lane-label">After</span>
+              <ol class="chain">
+                <li><span class="chip">Question asked in plain English</span></li>
+                <li><span class="chip">Query built on the semantic model</span></li>
+                <li><span class="chip">Read-only execution</span></li>
+                <li><span class="chip">Answer + the SQL behind it</span></li>
+              </ol>
+            </div>
+            <figcaption>The bottleneck was never the data. It was the single person who could translate a business question into a query.</figcaption>
+          </figure>
+
+          <h3>What it changed</h3>
+          <p>Questions that used to take days now take a sentence, so people ask far more of them — and follow-up questions, which is where the useful findings usually live. The business stopped depending on one individual for access to its own records. Because every answer carries its query, the numbers are trusted enough to act on and correctable when a definition turns out to be wrong. And the scheduled watchlists changed the posture from asking after the fact to being told early: slow stock, slipping accounts and overdue balances now surface while there's still time to act on them.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="case reveal" id="quality-lab">
+      <aside class="rail">
+        <span class="code">SVC / 04</span>
+        <dl>
+          <dt>Discipline</dt><dd>QA / QC laboratory operations</dd>
+          <dt>Captures</dt><dd>Instrument output, technician entry, batch records</dd>
+          <dt>Produces</dt><dd>Certificates of analysis, NCR workflow, trends</dd>
+          <dt>Built for</dt><dd>Audit &amp; traceability requirements</dd>
+        </dl>
+      </aside>
+      <div>
+        <h2>Quality Lab Automation</h2>
+        <p class="sub">From sample intake to signed certificate, with the paper trail built in rather than reconstructed.</p>
+
+        <div class="prose">
+          <h3>The situation</h3>
+          <p>The lab ran on printouts and spreadsheets. Samples were logged in a book, instrument results came off the machine on thermal paper and were transcribed into Excel by hand, spec limits were checked by eye against a laminated sheet, and certificates of analysis were typed up individually and emailed out. Batches waited on that paperwork before they could be released.</p>
+          <p>Two risks sat inside that. Transcription is where quality records fail — a decimal in the wrong place on a hand-typed result is a serious problem on a document a customer relies on. And traceability existed only in the physical files, so preparing for an audit or a customer complaint meant a person spending days pulling folders to reconstruct what happened to one batch six months ago.</p>
+
+          <h3>What we built</h3>
+          <ul class="build">
+            <li><strong>Sample intake with identity attached.</strong> Every sample is registered on arrival, given a barcoded label, and linked to its batch, product, supplier and the test plan that applies to it — with custody recorded at each handoff.</li>
+            <li><strong>Instrument capture instead of transcription.</strong> Results are read directly from instrument output files and interfaces, so the number on the certificate is the number the instrument produced. Manual entry, where an instrument can't be connected, is double-checked and attributed.</li>
+            <li><strong>Specification checking on every result.</strong> Each measurement is compared automatically against the correct spec for that product and grade, and flagged pass, warning or out-of-specification the moment it lands.</li>
+            <li><strong>Certificates generated, not typed.</strong> A complete certificate of analysis is produced from the verified results, formatted to the customer's requirements, with method references and the analyst on record.</li>
+            <li><strong>Non-conformance handled as a workflow.</strong> An out-of-spec result raises a non-conformance, notifies the right people immediately, holds the batch, and tracks investigation, disposition and sign-off to closure.</li>
+            <li><strong>Trending and early warning.</strong> Results are charted over time by product, line, shift and supplier, so drift toward a limit is visible while it's still drift — before it becomes a failed batch.</li>
+            <li><strong>An audit trail that assembles itself.</strong> Raw results, revisions, approvals and timestamps are retained and immutable. Any batch's full history is retrievable on demand.</li>
+          </ul>
+
+          <figure class="flow">
+            <div class="lane lane--before">
+              <span class="lane-label">Before</span>
+              <ol class="chain">
+                <li><span class="chip">Sample logged in a book</span></li>
+                <li><span class="chip">Instrument printout</span></li>
+                <li><span class="chip">Typed into Excel</span></li>
+                <li><span class="chip">Checked by eye</span></li>
+                <li><span class="chip">COA typed by hand</span></li>
+                <li><span class="chip">Batch waits for paperwork</span></li>
+                <li><span class="chip">Audit = days of folders</span></li>
+              </ol>
+            </div>
+            <div class="lane lane--after">
+              <span class="lane-label">After</span>
+              <ol class="chain">
+                <li><span class="chip">Barcoded intake</span></li>
+                <li><span class="chip">Instrument result captured</span></li>
+                <li><span class="chip">Auto spec check</span></li>
+                <li><span class="chip">COA generated</span></li>
+                <li><span class="chip">Out-of-spec → NCR + hold</span></li>
+                <li><span class="chip">Audit trail on demand</span></li>
+              </ol>
+            </div>
+            <figcaption>Transcription is removed from the one place it does the most damage: the record a customer, a regulator and a recall investigation all rely on.</figcaption>
+          </figure>
+
+          <h3>What it changed</h3>
+          <p>Batches are released as soon as the testing is genuinely finished rather than when the paperwork catches up, which frees warehouse space and shortens lead times to customers. The most likely source of an incorrect quality record — a human copying a number — is gone from the routine path. Out-of-spec results now stop a batch automatically instead of relying on someone noticing, and the escalation is on record from the first minute. And audits changed character entirely: evidence that used to take a week of preparation is produced from the system while the auditor is sitting there.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="case reveal" id="social">
+      <aside class="rail">
+        <span class="code">SVC / 05</span>
+        <dl>
+          <dt>Discipline</dt><dd>Marketing operations</dd>
+          <dt>Sources</dt><dd>Product data, promotions, seasonality, past posts</dd>
+          <dt>Channels</dt><dd>Instagram, Facebook, LinkedIn, TikTok, X</dd>
+          <dt>Human role</dt><dd>Approves the calendar, not each post</dd>
+        </dl>
+      </aside>
+      <div>
+        <h2>Social Media Automation</h2>
+        <p class="sub">A consistent presence, drafted in the business's own voice and tied to what it's actually selling.</p>
+
+        <div class="prose">
+          <h3>The situation</h3>
+          <p>The client knew social media mattered and treated it as whatever was left at the end of the week. Posting came in bursts — three in a good week, nothing for a month — because it depended on someone with an operational job finding time to think of something to say, write it, find an image and post it across four platforms individually.</p>
+          <p>The bigger loss was on the way back in. Comments and direct messages included real buying questions — price, availability, delivery — and they went unanswered for days because nobody owned the inbox. Enquiries that arrived warm went cold in a notifications tab.</p>
+
+          <h3>What we built</h3>
+          <ul class="build">
+            <li><strong>A voice model built from their own approved posts.</strong> Drafts come out sounding like the business rather than like generic marketing copy, with the vocabulary, claims and tone the owner already signed off on.</li>
+            <li><strong>A calendar driven by real events.</strong> The content plan is generated from things that are actually happening — new stock arriving, a promotion, a seasonal peak, a completed project — instead of from a blank page every Monday.</li>
+            <li><strong>Assets assembled with the copy.</strong> Product photography, past project images and templated graphics are matched to each draft and sized correctly per platform.</li>
+            <li><strong>One approval step.</strong> The week's queue arrives for review in a single pass. Approve, edit or reject; nothing publishes without that sign-off.</li>
+            <li><strong>Publishing across channels.</strong> Approved posts go out automatically at scheduled times to every connected platform, in the right format for each.</li>
+            <li><strong>Inbound triage.</strong> Comments and DMs are classified as sales enquiry, support issue, spam or general engagement. Sales enquiries alert the right person immediately with a drafted reply; routine questions get a suggested response; spam is filtered.</li>
+            <li><strong>A weekly report that feeds back.</strong> What reached people, what converted to enquiries, and what didn't — used to shape the next calendar rather than filed and forgotten.</li>
+          </ul>
+
+          <figure class="flow">
+            <div class="lane lane--before">
+              <span class="lane-label">Before</span>
+              <ol class="chain">
+                <li><span class="chip">Someone finds time</span></li>
+                <li><span class="chip">Thinks of a post</span></li>
+                <li><span class="chip">Writes it</span></li>
+                <li><span class="chip">Finds an image</span></li>
+                <li><span class="chip">Posts to each platform</span></li>
+                <li><span class="chip">DMs go unread</span></li>
+              </ol>
+            </div>
+            <div class="lane lane--after">
+              <span class="lane-label">After</span>
+              <ol class="chain">
+                <li><span class="chip">Calendar from real events</span></li>
+                <li><span class="chip">Drafts in brand voice</span></li>
+                <li><span class="chip">One weekly approval</span></li>
+                <li><span class="chip">Auto-published everywhere</span></li>
+                <li><span class="chip">Enquiries routed same hour</span></li>
+              </ol>
+            </div>
+            <figcaption>The owner still decides what the business says. They stop being the bottleneck for producing and distributing it.</figcaption>
+          </figure>
+
+          <h3>What it changed</h3>
+          <p>Posting became consistent, which is most of what performance on these platforms rewards — and it stopped competing with operational work for the same person's attention, since a week of content is now reviewed in one sitting. The content also stopped being generic: because the calendar is driven by stock and promotions, posts point at things customers can actually buy this week. Most valuably, inbound enquiries are answered in the hour rather than the week, so interest that used to evaporate now reaches a salesperson while it's still live.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- flagship -->
+  <section class="flagship reveal" id="taxos">
+    <div class="banner">
+      <span class="tag">Our own product</span>
+      <span class="eyebrow">SVC / 06 &middot; AI SaaS engineering</span>
+    </div>
+    <h2>AI Tax Auditing &amp; Optimisation Engine</h2>
+    <p class="sub">A multi-tenant SaaS platform that reads financial documents, audits a return against the rules, and explains every number it produces.</p>
+
+    <div class="prose" style="margin-top:26px;">
+      <p>Client automation shows we can make an existing operation faster. This shows we can build and run a regulated software product end to end — because we built one for ourselves, in the least forgiving domain we could have chosen.</p>
+      <p>Tax is unforgiving for a specific reason: a confident wrong answer is worse than no answer. That constraint shaped the architecture, and the architecture is the part worth showing a prospective client. <strong>The AI never does the arithmetic.</strong> A deterministic, testable rules engine computes every figure — eligibility, thresholds, limits, liability. The AI does what it is genuinely reliable at: reading messy documents, matching them to the right treatment, spotting what's missing or inconsistent, and explaining the result in plain language with a citation to the provision it relied on.</p>
+      <p>That same split — deterministic where it must be right, AI where it must be flexible — is exactly how we build automation for operating businesses. Tax is simply the version where the consequences of getting it wrong are written into law.</p>
+    </div>
+
+    <div class="fl-grid">
+      <div class="module">
+        <h4>Document ingestion &amp; extraction</h4>
+        <p>Receipts, invoices, statements and slips arrive as photographs, scans and PDFs and come out as structured, categorised financial records — including the messy, unstructured expense documents that automated feeds and government pre-fill services cannot supply.</p>
+      </div>
+      <div class="module">
+        <h4>Deterministic rules engine</h4>
+        <p>Every calculation runs through a versioned, unit-tested rules engine tied to a specific tax year. Rules are readable, testable and independently verifiable — the requirement that any certification or professional review will impose anyway.</p>
+      </div>
+      <div class="module">
+        <h4>Audit &amp; anomaly checking</h4>
+        <p>The engine reviews a completed position the way a reviewer would: figures inconsistent with each other, claims outside normal ranges for the profile, duplicate entries, categories that invite scrutiny, and documents that should exist but don't.</p>
+      </div>
+      <div class="module">
+        <h4>Deduction &amp; credit detection</h4>
+        <p>Extracted records are tested against every credit and deduction the profile is eligible for, so items that only surface when someone reviews the whole picture — rather than one form at a time — get caught.</p>
+      </div>
+      <div class="module">
+        <h4>Explanations with citations</h4>
+        <p>Each figure comes with a plain-language explanation and a reference to the rule behind it. Users are told why, not just how much — which is what converts a calculated number into one a person is willing to sign.</p>
+      </div>
+      <div class="module">
+        <h4>Full provenance trail</h4>
+        <p>Every number traces back to the source document, the extraction, the rule version and the timestamp. If a figure is ever questioned, the entire chain that produced it can be reconstructed.</p>
+      </div>
+      <div class="module">
+        <h4>Forward-looking planning</h4>
+        <p>The same engine runs before the year closes, not just after: liability forecasting and scenario modelling, delivered while there is still time to act rather than as a report on decisions already made.</p>
+      </div>
+      <div class="module">
+        <h4>Compliance-grade platform</h4>
+        <p>Multi-tenant architecture with per-tenant isolation, role-based access, encryption in transit and at rest, regional data residency, and no raw financial documents sent to third-party model providers without zero-retention terms.</p>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:34px;">
+      <h3>Why this matters to your business</h3>
+      <p>If we hold that standard for a product where an error is a legal liability, the same engineering goes into your order intake, your quotes and your quality records. The techniques are identical: read the document, apply the rule, write the result, explain it, keep the trace.</p>
+    </div>
+  </section>
+
+  <!-- process -->
+  <section class="process reveal">
+    <span class="eyebrow">How an engagement runs</span>
+    <h2 style="font-weight:800;font-stretch:110%;font-size:clamp(24px,3vw,32px);letter-spacing:-.015em;line-height:1.1;margin-top:12px;max-width:20ch;">We start with one workflow, not a transformation programme.</h2>
+    <ol class="steps">
+      <li>
+        <h4>Walk the process</h4>
+        <p>We sit with the people doing the work and map what actually happens, including the workarounds nobody documented.</p>
+      </li>
+      <li>
+        <h4>Pick the one that pays</h4>
+        <p>We rank candidates by hours consumed, error cost and how contained the change is, then start with a single workflow.</p>
+      </li>
+      <li>
+        <h4>Build against reality</h4>
+        <p>We build on your real documents and your real edge cases, integrating with the software you already run rather than replacing it.</p>
+      </li>
+      <li>
+        <h4>Run in parallel</h4>
+        <p>The automation runs beside the manual process until its output matches, so nothing is trusted before it has earned it.</p>
+      </li>
+      <li>
+        <h4>Hand over</h4>
+        <p>Your team gets documentation, the exception desk and control of the rules — plus monitoring and support from us as volumes grow.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- stack -->
+  <section class="stack reveal">
+    <span class="eyebrow">We integrate with what you already run</span>
+    <p style="max-width:60ch;margin:12px 0 0;color:var(--ink-soft);font-size:16px;">Automation should slot into the tools your business is already built on. In practice that has meant:</p>
+    <div class="chips">
+      <span>ERP systems</span><span>QuickBooks</span><span>Xero</span><span>Sage</span><span>SQL &amp; Postgres</span>
+      <span>Google Workspace</span><span>Microsoft 365</span><span>Shared inboxes</span><span>WhatsApp Business</span>
+      <span>Shopify</span><span>Customer portals &amp; EDI</span><span>CRM platforms</span><span>Lab instruments</span>
+      <span>E-signature</span><span>Meta &amp; LinkedIn APIs</span><span>Spreadsheets</span>
+    </div>
+  </section>
+
+  <!-- cta -->
+  <section class="cta reveal">
+    <div>
+      <h2>Tell us the task your team dreads on Monday morning.</h2>
+      <p>We'll map it, tell you honestly whether it's worth automating, and scope what it would take. That first conversation costs nothing and takes about thirty minutes.</p>
+    </div>
+    <div>
+      <a class="btn" href="mailto:hello@example.com?subject=Automation%20enquiry">Start a conversation</a>
+      <p class="contact">
+        hello@example.com<br>
+        onyxautomation.example
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <p>ONYX AUTOMATION &middot; SELECTED WORK</p>
+    <p>OPERATIONS AUTOMATION &middot; AI SYSTEMS &middot; SAAS ENGINEERING</p>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var nodes = document.querySelectorAll(".reveal");
+  if (reduce || !("IntersectionObserver" in window)) {
+    nodes.forEach(function(n){ n.classList.add("in"); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+  nodes.forEach(function(n){ io.observe(n); });
+})();
+</script>
