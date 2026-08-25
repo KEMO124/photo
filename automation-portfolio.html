@@ -1,0 +1,656 @@
+<title>Systems We've Shipped</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+:root{
+  --ground:#F4F5F3;
+  --surface:#FFFFFF;
+  --sunk:#E9EBE7;
+  --ink:#14181A;
+  --ink-2:#4A5257;
+  --ink-3:#7C868C;
+  --rule:#D3D7D2;
+  --rule-strong:#B9BFB8;
+  --accent:#1E3FBF;
+  --accent-ink:#1E3FBF;
+  --accent-soft:#E3E8FA;
+  --manual:#8C7F6C;
+  --manual-soft:#EDE8DE;
+  --signal:#C2571E;
+  --signal-soft:#FBEADF;
+  --shadow:0 1px 2px rgba(20,24,26,.06), 0 8px 24px -16px rgba(20,24,26,.28);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1113;
+    --surface:#161A1D;
+    --sunk:#1C2125;
+    --ink:#E8EBE8;
+    --ink-2:#A3ACB2;
+    --ink-3:#79838A;
+    --rule:#282F34;
+    --rule-strong:#3A4249;
+    --accent:#8DA4FF;
+    --accent-ink:#A8BAFF;
+    --accent-soft:#1A2240;
+    --manual:#A6977D;
+    --manual-soft:#26221B;
+    --signal:#E28B50;
+    --signal-soft:#2E1E13;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1113;
+  --surface:#161A1D;
+  --sunk:#1C2125;
+  --ink:#E8EBE8;
+  --ink-2:#A3ACB2;
+  --ink-3:#79838A;
+  --rule:#282F34;
+  --rule-strong:#3A4249;
+  --accent:#8DA4FF;
+  --accent-ink:#A8BAFF;
+  --accent-soft:#1A2240;
+  --manual:#A6977D;
+  --manual-soft:#26221B;
+  --signal:#E28B50;
+  --signal-soft:#2E1E13;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.62;
+  margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 28px}
+
+h1,h2,h3,h4{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.4rem,5.2vw,3.9rem);font-weight:700;letter-spacing:-.028em;line-height:1.04}
+h2{font-size:clamp(1.5rem,2.6vw,2rem);font-weight:600;letter-spacing:-.02em;line-height:1.14}
+h3{font-size:clamp(1.35rem,2.3vw,1.72rem);font-weight:600;letter-spacing:-.018em;line-height:1.16}
+h4{font-size:.95rem;font-weight:600;letter-spacing:-.005em}
+p{margin:0}
+a{color:var(--accent-ink)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.7rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);
+}
+
+/* ---------- fill-in placeholder ---------- */
+.fill{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.82em;
+  color:var(--signal);
+  background:var(--signal-soft);
+  border:1px dashed var(--signal);
+  border-radius:3px;
+  padding:.05em .4em;
+  white-space:nowrap;
+}
+
+/* ---------- masthead ---------- */
+.masthead{border-bottom:1px solid var(--rule);background:var(--surface)}
+.masthead .wrap{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-top:18px;padding-bottom:18px;flex-wrap:wrap}
+.markname{font-family:Archivo,sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(56px,9vw,104px) 0 clamp(40px,6vw,64px);border-bottom:1px solid var(--rule)}
+.hero-lede{font-size:clamp(1.08rem,1.6vw,1.24rem);color:var(--ink-2);max-width:62ch;margin-top:26px}
+.hero h1{margin-top:18px;max-width:19ch}
+.hero h1 em{font-style:normal;color:var(--accent-ink)}
+
+.ledger{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);
+  margin-top:44px;border-radius:4px;overflow:hidden;
+}
+.ledger div{background:var(--surface);padding:18px 20px}
+.ledger dt{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.ledger dd{margin:6px 0 0;font-family:Archivo,sans-serif;font-weight:600;font-size:1.02rem;letter-spacing:-.01em;line-height:1.3}
+
+/* ---------- section frame ---------- */
+.section{padding:clamp(52px,7vw,84px) 0;border-bottom:1px solid var(--rule)}
+.section-head{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;margin-bottom:34px}
+.section-head p{color:var(--ink-2);max-width:58ch;flex:1 1 340px;font-size:.98rem}
+
+/* ---------- capability strip ---------- */
+.caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}
+.cap{border-top:2px solid var(--ink);padding-top:14px}
+.cap h4{margin-bottom:6px}
+.cap p{font-size:.94rem;color:var(--ink-2)}
+
+/* ---------- case studies ---------- */
+.case{
+  display:grid;grid-template-columns:180px minmax(0,1fr);gap:0;
+  background:var(--surface);border:1px solid var(--rule);border-radius:5px;
+  box-shadow:var(--shadow);overflow:hidden;margin-top:26px;
+}
+.case-rail{
+  background:var(--sunk);border-right:1px solid var(--rule);
+  padding:26px 20px;display:flex;flex-direction:column;gap:18px;
+}
+.railitem dt{font-family:"IBM Plex Mono",monospace;font-size:.63rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.railitem dd{margin:4px 0 0;font-family:"IBM Plex Mono",monospace;font-size:.8rem;line-height:1.45;color:var(--ink-2)}
+.tagcode{
+  display:inline-block;font-family:"IBM Plex Mono",monospace;font-weight:600;
+  font-size:.74rem;letter-spacing:.1em;
+  color:var(--accent-ink);background:var(--accent-soft);
+  border-radius:3px;padding:4px 8px;
+}
+.case-body{padding:28px clamp(22px,3vw,34px) 30px}
+.case-body h3{margin-bottom:14px}
+.block{margin-top:20px}
+.block > h4{
+  font-family:"IBM Plex Mono",monospace;font-size:.68rem;font-weight:600;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3);margin-bottom:7px;
+}
+.block p{font-size:1rem}
+.detail{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.detail li{position:relative;padding-left:18px;font-size:.95rem;color:var(--ink-2)}
+.detail li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:1px;background:var(--rule-strong)}
+
+/* ---------- flow strip ---------- */
+.flow{margin-top:22px;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.flowrow{display:flex;align-items:center;gap:10px;padding:13px 16px;overflow-x:auto}
+.flowrow + .flowrow{border-top:1px solid var(--rule)}
+.flowrow.before{background:var(--manual-soft)}
+.flowrow.after{background:var(--accent-soft)}
+.flowlabel{
+  font-family:"IBM Plex Mono",monospace;font-size:.63rem;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;flex:0 0 auto;width:58px;
+}
+.before .flowlabel{color:var(--manual)}
+.after .flowlabel{color:var(--accent-ink)}
+.step{
+  font-family:"IBM Plex Mono",monospace;font-size:.76rem;white-space:nowrap;flex:0 0 auto;
+  padding:4px 9px;border-radius:3px;border:1px solid;
+}
+.before .step{color:var(--manual);border-color:var(--manual);opacity:.92}
+.after .step{color:var(--accent-ink);border-color:var(--accent);font-weight:500}
+.arrow{flex:0 0 auto;font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--ink-3)}
+.flowtail{
+  flex:0 0 auto;margin-left:auto;padding-left:14px;
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;font-variant-numeric:tabular-nums;
+}
+.before .flowtail{color:var(--manual)}
+.after .flowtail{color:var(--accent-ink)}
+
+/* ---------- results ---------- */
+.results{
+  margin-top:22px;border-left:3px solid var(--signal);background:var(--sunk);
+  padding:14px 18px;border-radius:0 4px 4px 0;
+}
+.results h4{
+  font-family:"IBM Plex Mono",monospace;font-size:.68rem;font-weight:600;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;
+}
+.results ul{margin:0;padding-left:18px;display:grid;gap:5px}
+.results li{font-size:.95rem;color:var(--ink-2)}
+
+/* in-house product variant */
+.case.product{border-color:var(--signal)}
+.case.product .case-rail{background:var(--signal-soft);border-right-color:var(--signal)}
+.case.product .tagcode{color:var(--signal);background:var(--surface);border:1px solid var(--signal)}
+
+/* ---------- process ---------- */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:0;border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:var(--surface)}
+.step-card{padding:24px 22px;border-right:1px solid var(--rule)}
+.step-card:last-child{border-right:none}
+.step-n{font-family:"IBM Plex Mono",monospace;font-size:.72rem;font-weight:600;letter-spacing:.12em;color:var(--accent-ink)}
+.step-card h4{margin:10px 0 7px}
+.step-card p{font-size:.93rem;color:var(--ink-2)}
+
+/* ---------- close ---------- */
+.close{padding:clamp(56px,8vw,92px) 0}
+.close h2{max-width:22ch}
+.close p{margin-top:20px;color:var(--ink-2);max-width:60ch}
+.contact{
+  margin-top:34px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:4px;overflow:hidden;
+}
+.contact div{background:var(--surface);padding:18px 20px}
+.contact dt{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.contact dd{margin:7px 0 0;font-family:"IBM Plex Mono",monospace;font-size:.86rem;word-break:break-word}
+footer{border-top:1px solid var(--rule);padding:22px 0 34px;color:var(--ink-3);font-size:.82rem}
+
+@media (max-width:780px){
+  .case{grid-template-columns:1fr}
+  .case-rail{
+    border-right:none;border-bottom:1px solid var(--rule);
+    flex-direction:row;flex-wrap:wrap;gap:22px;padding:18px 20px;
+  }
+  .case.product .case-rail{border-right:none;border-bottom-color:var(--signal)}
+  .step-card{border-right:none;border-bottom:1px solid var(--rule)}
+  .step-card:last-child{border-bottom:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="markname"><span class="fill">[COMPANY NAME]</span></span>
+    <span class="eyebrow">Operations automation &middot; Selected work</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">What we do</p>
+    <h1>We take the repetitive parts of your operation and make them <em>run themselves</em>.</h1>
+    <p class="hero-lede">Every small business runs on a handful of jobs that a person does the same way, every day, by hand — re-typing orders, rebuilding quotes, copying lab results, chasing follow-ups. We build software that does those jobs, inside the systems you already use, and leaves your team to handle the exceptions.</p>
+
+    <dl class="ledger">
+      <div><dt>Engagements delivered</dt><dd><span class="fill">[N]</span> systems, <span class="fill">[N]</span> clients</dd></div>
+      <div><dt>Sectors</dt><dd><span class="fill">[e.g. distribution, manufacturing, labs]</span></dd></div>
+      <div><dt>Typical first build</dt><dd><span class="fill">[N–N weeks]</span></dd></div>
+      <div><dt>Works with</dt><dd>Your existing ERP, inbox, and spreadsheets</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Where we work</h2>
+      <p>Five areas we have built and shipped in, plus one product of our own. If your bottleneck looks like one of these, we have already solved a version of it.</p>
+    </div>
+    <div class="caps">
+      <div class="cap"><h4>Sales order intake</h4><p>Orders arriving as PDFs, emails and portal exports, entered into your system without anyone re-keying them.</p></div>
+      <div class="cap"><h4>Database AI integration</h4><p>Plain-English questions answered directly from your operational data, without waiting on whoever writes the queries.</p></div>
+      <div class="cap"><h4>Social media</h4><p>A planned, drafted and scheduled content pipeline with one approval step, plus a single inbox for everything inbound.</p></div>
+      <div class="cap"><h4>Quotations</h4><p>Quotes built from live cost inputs and your own pricing rules, versioned, sent, and followed up automatically.</p></div>
+      <div class="cap"><h4>Quality lab</h4><p>Results captured once at the bench, checked against spec as they are entered, and turned straight into a certificate.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Selected work</h2>
+      <p>Client details are anonymised. Each entry describes the process as we found it, what we built, and what changed.</p>
+    </div>
+
+    <!-- 1 -->
+    <article class="case">
+      <div class="case-rail">
+        <span class="tagcode">SO-01</span>
+        <div class="railitem"><dt>Sector</dt><dd><span class="fill">[sector]</span></dd></div>
+        <div class="railitem"><dt>Company size</dt><dd><span class="fill">[N staff]</span></dd></div>
+        <div class="railitem"><dt>Runs on</dt><dd><span class="fill">[ERP / system]</span></dd></div>
+      </div>
+      <div class="case-body">
+        <h3>Sales order automation</h3>
+        <div class="block">
+          <h4>The situation</h4>
+          <p>Orders arrived by email — some as PDFs, some as spreadsheet attachments, some typed in the body of the message — each customer using their own layout and their own part codes. One person opened every message, re-typed each line into the ERP, checked stock, and typed a confirmation back. Peak days built a backlog, and typos surfaced later as short shipments and credit notes.</p>
+        </div>
+        <div class="block">
+          <h4>What we built</h4>
+          <p>An intake pipeline that reads an incoming order in whatever format it arrives in, maps the customer's part codes to your SKUs, validates price, quantity breaks and stock, creates the order in the ERP, and sends the confirmation — routing only the lines it is not confident about to a human queue.</p>
+          <ul class="detail">
+            <li>Per-customer code mapping that learns from each correction the team makes</li>
+            <li>Duplicate PO detection before an order is created twice</li>
+            <li>Price and minimum-order-quantity checks against the live price list</li>
+            <li>An exception queue, so nothing uncertain is ever posted silently</li>
+          </ul>
+        </div>
+        <div class="flow">
+          <div class="flowrow before">
+            <span class="flowlabel">Before</span>
+            <span class="step">Open email</span><span class="arrow">&rarr;</span>
+            <span class="step">Read PDF</span><span class="arrow">&rarr;</span>
+            <span class="step">Re-key lines</span><span class="arrow">&rarr;</span>
+            <span class="step">Check stock</span><span class="arrow">&rarr;</span>
+            <span class="step">Check price</span><span class="arrow">&rarr;</span>
+            <span class="step">Type confirmation</span>
+            <span class="flowtail"><span class="fill">[~N min/order]</span></span>
+          </div>
+          <div class="flowrow after">
+            <span class="flowlabel">Now</span>
+            <span class="step">Order arrives</span><span class="arrow">&rarr;</span>
+            <span class="step">Parsed, matched, validated</span><span class="arrow">&rarr;</span>
+            <span class="step">Posted + confirmed</span>
+            <span class="flowtail"><span class="fill">[~N sec]</span></span>
+          </div>
+        </div>
+        <div class="results">
+          <h4>Result</h4>
+          <ul>
+            <li><span class="fill">[N hours/week returned to the order desk]</span></li>
+            <li><span class="fill">[N% of orders posted with no human touch]</span></li>
+            <li><span class="fill">[entry errors down from N to N per month]</span></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 2 -->
+    <article class="case">
+      <div class="case-rail">
+        <span class="tagcode">DB-02</span>
+        <div class="railitem"><dt>Sector</dt><dd><span class="fill">[sector]</span></dd></div>
+        <div class="railitem"><dt>Data</dt><dd><span class="fill">[system / DB]</span></dd></div>
+        <div class="railitem"><dt>Users</dt><dd><span class="fill">[N staff]</span></dd></div>
+      </div>
+      <div class="case-body">
+        <h3>Database AI integration</h3>
+        <div class="block">
+          <h4>The situation</h4>
+          <p>Everything the business needed to know was already in the database — what a customer bought last year, which jobs were running late, which products carried the thinnest margin. Getting an answer meant asking the one person who could write the query, then waiting. Most questions simply went unasked, and decisions were made on memory.</p>
+        </div>
+        <div class="block">
+          <h4>What we built</h4>
+          <p>A question-and-answer layer over the operational database. Staff ask in plain language; the system writes the query, returns the table or chart, and shows the query it ran so the answer can be checked. Access is read-only and scoped by role, so nobody sees data they should not, and nothing can be altered by asking.</p>
+          <ul class="detail">
+            <li>Read-only connection — the layer can never write, update or delete</li>
+            <li>Row and column permissions inherited from existing roles</li>
+            <li>The generated query is shown with every answer, so results are auditable</li>
+            <li>Useful questions can be saved and scheduled as recurring reports</li>
+          </ul>
+        </div>
+        <div class="flow">
+          <div class="flowrow before">
+            <span class="flowlabel">Before</span>
+            <span class="step">Ask the analyst</span><span class="arrow">&rarr;</span>
+            <span class="step">Join the queue</span><span class="arrow">&rarr;</span>
+            <span class="step">Query written</span><span class="arrow">&rarr;</span>
+            <span class="step">Exported to spreadsheet</span>
+            <span class="flowtail"><span class="fill">[N days]</span></span>
+          </div>
+          <div class="flowrow after">
+            <span class="flowlabel">Now</span>
+            <span class="step">Ask in plain English</span><span class="arrow">&rarr;</span>
+            <span class="step">Answer + query shown</span>
+            <span class="flowtail"><span class="fill">[N sec]</span></span>
+          </div>
+        </div>
+        <div class="results">
+          <h4>Result</h4>
+          <ul>
+            <li><span class="fill">[N questions/month answered without an analyst]</span></li>
+            <li><span class="fill">[N hours/week returned to the person who used to write the queries]</span></li>
+            <li><span class="fill">[reporting turnaround: N days to minutes]</span></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 3 -->
+    <article class="case">
+      <div class="case-rail">
+        <span class="tagcode">SM-03</span>
+        <div class="railitem"><dt>Sector</dt><dd><span class="fill">[sector]</span></dd></div>
+        <div class="railitem"><dt>Channels</dt><dd><span class="fill">[platforms]</span></dd></div>
+        <div class="railitem"><dt>Cadence</dt><dd><span class="fill">[N posts/week]</span></dd></div>
+      </div>
+      <div class="case-body">
+        <h3>Social media automation</h3>
+        <div class="block">
+          <h4>The situation</h4>
+          <p>Posting was the first thing to fall off a busy week. Content ideas lived in someone's notes app, captions were written from scratch each time, and comments and direct messages went unanswered for days — including the ones that were genuine enquiries.</p>
+        </div>
+        <div class="block">
+          <h4>What we built</h4>
+          <p>A content pipeline that keeps the calendar full without keeping anyone at a keyboard. It drafts a planned schedule from the product catalogue, past performance and the seasonal cycle, stages every post for a single approval, publishes on time across channels, and pulls comments and DMs into one inbox with a suggested reply ready to edit.</p>
+          <ul class="detail">
+            <li>Nothing publishes without a human approving it — one screen, one pass a week</li>
+            <li>Captions drafted in the brand's own voice from previously approved posts</li>
+            <li>Comments and DMs consolidated into one inbox, with enquiries flagged first</li>
+            <li>A weekly digest of what performed, feeding the next batch of drafts</li>
+          </ul>
+        </div>
+        <div class="flow">
+          <div class="flowrow before">
+            <span class="flowlabel">Before</span>
+            <span class="step">Think of something</span><span class="arrow">&rarr;</span>
+            <span class="step">Write caption</span><span class="arrow">&rarr;</span>
+            <span class="step">Find image</span><span class="arrow">&rarr;</span>
+            <span class="step">Post manually</span><span class="arrow">&rarr;</span>
+            <span class="step">Check each app for replies</span>
+            <span class="flowtail"><span class="fill">[N hrs/week]</span></span>
+          </div>
+          <div class="flowrow after">
+            <span class="flowlabel">Now</span>
+            <span class="step">Review the week's drafts</span><span class="arrow">&rarr;</span>
+            <span class="step">Approve</span><span class="arrow">&rarr;</span>
+            <span class="step">Published + replies in one inbox</span>
+            <span class="flowtail"><span class="fill">[N min/week]</span></span>
+          </div>
+        </div>
+        <div class="results">
+          <h4>Result</h4>
+          <ul>
+            <li><span class="fill">[posting cadence held at N/week for N months]</span></li>
+            <li><span class="fill">[response time to enquiries: N days to N hours]</span></li>
+            <li><span class="fill">[reach / engagement / enquiries — your figure]</span></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 4 -->
+    <article class="case">
+      <div class="case-rail">
+        <span class="tagcode">QT-04</span>
+        <div class="railitem"><dt>Sector</dt><dd><span class="fill">[sector]</span></dd></div>
+        <div class="railitem"><dt>Volume</dt><dd><span class="fill">[N quotes/month]</span></dd></div>
+        <div class="railitem"><dt>Runs on</dt><dd><span class="fill">[system]</span></dd></div>
+      </div>
+      <div class="case-body">
+        <h3>Quotation automation</h3>
+        <div class="block">
+          <h4>The situation</h4>
+          <p>Every quote started as last month's quote with the numbers changed. Pricing rules lived in one experienced head, so margins drifted depending on who was quoting; revisions overwrote each other, leaving nobody sure which version the customer was holding; and follow-ups happened when someone remembered.</p>
+        </div>
+        <div class="block">
+          <h4>What we built</h4>
+          <p>A quoting engine that assembles the quote from live cost inputs and the company's own pricing and discount rules, produces the branded document, keeps every revision as a numbered version, sends it, and follows up on a schedule until the quote is won, lost, or expired.</p>
+          <ul class="detail">
+            <li>Margin floors enforced at the point of quoting, with approval required to go below</li>
+            <li>Full version history — you can always see exactly what the customer received</li>
+            <li>Automatic follow-up sequence, stopping the moment the customer replies</li>
+            <li>Win/loss reasons captured and fed back into pricing decisions</li>
+          </ul>
+        </div>
+        <div class="flow">
+          <div class="flowrow before">
+            <span class="flowlabel">Before</span>
+            <span class="step">Copy old quote</span><span class="arrow">&rarr;</span>
+            <span class="step">Look up costs</span><span class="arrow">&rarr;</span>
+            <span class="step">Work out margin</span><span class="arrow">&rarr;</span>
+            <span class="step">Rebuild document</span><span class="arrow">&rarr;</span>
+            <span class="step">Email</span><span class="arrow">&rarr;</span>
+            <span class="step">Remember to chase</span>
+            <span class="flowtail"><span class="fill">[~N min/quote]</span></span>
+          </div>
+          <div class="flowrow after">
+            <span class="flowlabel">Now</span>
+            <span class="step">Enter the requirement</span><span class="arrow">&rarr;</span>
+            <span class="step">Priced, versioned, sent</span><span class="arrow">&rarr;</span>
+            <span class="step">Chased automatically</span>
+            <span class="flowtail"><span class="fill">[~N min]</span></span>
+          </div>
+        </div>
+        <div class="results">
+          <h4>Result</h4>
+          <ul>
+            <li><span class="fill">[quote turnaround: N days to N hours]</span></li>
+            <li><span class="fill">[N% of quotes followed up, vs. roughly N% before]</span></li>
+            <li><span class="fill">[margin consistency / win rate — your figure]</span></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 5 -->
+    <article class="case">
+      <div class="case-rail">
+        <span class="tagcode">QA-05</span>
+        <div class="railitem"><dt>Sector</dt><dd><span class="fill">[sector]</span></dd></div>
+        <div class="railitem"><dt>Throughput</dt><dd><span class="fill">[N tests/day]</span></dd></div>
+        <div class="railitem"><dt>Standard</dt><dd><span class="fill">[ISO / GMP / other]</span></dd></div>
+      </div>
+      <div class="case-body">
+        <h3>Quality lab automation</h3>
+        <div class="block">
+          <h4>The situation</h4>
+          <p>Test results were written on a bench sheet, typed into a spreadsheet, and typed a third time into the certificate of analysis. Every transcription was a chance to introduce an error, specification breaches were often noticed only at certificate stage — sometimes after the batch had already moved — and reconstructing who tested what, when, and on which instrument meant going back through paper.</p>
+        </div>
+        <div class="block">
+          <h4>What we built</h4>
+          <p>A bench-to-certificate system. Results are captured once, either straight from the instrument or on a tablet at the bench, and checked against the specification limits as they are entered. Anything out of spec is flagged immediately and the batch is held. The certificate of analysis is generated from the same record, so no number is ever re-typed.</p>
+          <ul class="detail">
+            <li>Live specification checking at the point of entry, not at certificate stage</li>
+            <li>Automatic batch hold and notification on an out-of-spec result</li>
+            <li>Retest and deviation workflow recorded against the batch</li>
+            <li>Complete audit trail: analyst, timestamp, instrument, method revision</li>
+          </ul>
+        </div>
+        <div class="flow">
+          <div class="flowrow before">
+            <span class="flowlabel">Before</span>
+            <span class="step">Write on bench sheet</span><span class="arrow">&rarr;</span>
+            <span class="step">Type into spreadsheet</span><span class="arrow">&rarr;</span>
+            <span class="step">Check against spec</span><span class="arrow">&rarr;</span>
+            <span class="step">Re-type into COA</span><span class="arrow">&rarr;</span>
+            <span class="step">Sign and file</span>
+            <span class="flowtail"><span class="fill">[N transcriptions]</span></span>
+          </div>
+          <div class="flowrow after">
+            <span class="flowlabel">Now</span>
+            <span class="step">Capture at the bench</span><span class="arrow">&rarr;</span>
+            <span class="step">Checked against spec instantly</span><span class="arrow">&rarr;</span>
+            <span class="step">COA generated</span>
+            <span class="flowtail">1 entry, 0 re-typing</span>
+          </div>
+        </div>
+        <div class="results">
+          <h4>Result</h4>
+          <ul>
+            <li><span class="fill">[N hours/week of transcription removed]</span></li>
+            <li><span class="fill">[out-of-spec results caught at entry rather than at COA]</span></li>
+            <li><span class="fill">[audit preparation: N days to N hours]</span></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 6 : in-house product -->
+    <article class="case product">
+      <div class="case-rail">
+        <span class="tagcode">TAX-06</span>
+        <div class="railitem"><dt>Type</dt><dd>Built in-house</dd></div>
+        <div class="railitem"><dt>Status</dt><dd><span class="fill">[in development / private beta]</span></dd></div>
+        <div class="railitem"><dt>Users</dt><dd><span class="fill">[accountants / SMEs]</span></dd></div>
+      </div>
+      <div class="case-body">
+        <h3>AI tax auditing engine</h3>
+        <div class="block">
+          <h4>Why we built it</h4>
+          <p>Reviewing a set of books or a return for errors is exactly the kind of work that eats expert hours: read every document, check every figure against the rules, and find what is missing, misclassified, or claimed twice. It is high-volume, high-stakes, and almost entirely mechanical — until it isn't. So we built the engine ourselves, as a product rather than a one-off, and it is where our own R&amp;D on document understanding and rules engines lives.</p>
+        </div>
+        <div class="block">
+          <h4>How it works</h4>
+          <p>Documents go in; findings come out. The AI does the reading — pulling figures out of receipts, statements, slips and ledgers, whatever shape they arrive in. A separate deterministic rules engine does every calculation and eligibility test. That split is the design decision the whole product rests on: a language model that does the arithmetic cannot be audited, and an audit tool that cannot be audited is worthless.</p>
+          <ul class="detail">
+            <li>Extraction from mixed, messy source documents — scans, photos, exports, PDFs</li>
+            <li>Deterministic rules engine for all calculations and eligibility determinations</li>
+            <li>Discrepancy detection: figures that disagree, entries claimed twice, documents missing</li>
+            <li>Every finding cites the provision it rests on, in plain language</li>
+            <li>Every number traces back to the page and line it came from</li>
+          </ul>
+        </div>
+        <div class="flow">
+          <div class="flowrow before">
+            <span class="flowlabel">Manual</span>
+            <span class="step">Read every document</span><span class="arrow">&rarr;</span>
+            <span class="step">Key into working paper</span><span class="arrow">&rarr;</span>
+            <span class="step">Check each rule by hand</span><span class="arrow">&rarr;</span>
+            <span class="step">Write up findings</span>
+            <span class="flowtail"><span class="fill">[N hrs/file]</span></span>
+          </div>
+          <div class="flowrow after">
+            <span class="flowlabel">Engine</span>
+            <span class="step">Upload the file</span><span class="arrow">&rarr;</span>
+            <span class="step">Extracted + tested against rules</span><span class="arrow">&rarr;</span>
+            <span class="step">Cited findings, reviewer confirms</span>
+            <span class="flowtail"><span class="fill">[N min/file]</span></span>
+          </div>
+        </div>
+        <div class="results">
+          <h4>What it demonstrates</h4>
+          <ul>
+            <li>We build systems that show their working — every output is traceable to a source</li>
+            <li>We know where AI belongs in a workflow, and where deterministic code has to take over</li>
+            <li>We can carry a build from prototype through to a product with real compliance constraints</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>How an engagement runs</h2>
+      <p>Same four steps every time. You are never asked to replace a system that works, and you see the thing running before you commit to it.</p>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <span class="step-n">STEP 01</span>
+        <h4>Watch the process</h4>
+        <p>A short call, then we watch the job actually being done. The bottleneck is usually not where the org chart says it is.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-n">STEP 02</span>
+        <h4>Pick one thing</h4>
+        <p>We scope a single process with a clear before-and-after — not a platform migration. You get a fixed price and a date.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-n">STEP 03</span>
+        <h4>Build and run in parallel</h4>
+        <p>The new system runs alongside the old one until it is provably right. Nothing is switched off on trust.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-n">STEP 04</span>
+        <h4>Hand it over</h4>
+        <p>Your team is trained on it, documentation comes with it, and we stay on for support. It is your system, not a rental.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="close">
+  <div class="wrap">
+    <p class="eyebrow">Next step</p>
+    <h2>Tell us the job nobody wants to do.</h2>
+    <p>If there is a task in your week that is done the same way every time — copied, re-typed, chased, or rebuilt from last month's file — that is the one to start with. A twenty-minute call is usually enough for us to tell you whether it is worth automating, and we will say so plainly if it isn't.</p>
+    <dl class="contact">
+      <div><dt>Email</dt><dd><span class="fill">[email@company.com]</span></dd></div>
+      <div><dt>Phone</dt><dd><span class="fill">[+1 000 000 0000]</span></dd></div>
+      <div><dt>Book a call</dt><dd><span class="fill">[calendar link]</span></dd></div>
+      <div><dt>Based in</dt><dd><span class="fill">[city] &middot; working remotely</span></dd></div>
+    </dl>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="fill">[COMPANY NAME]</span> &nbsp;&middot;&nbsp; Client names withheld by agreement. Figures shown are from the engagements described.
+  </div>
+</footer>
