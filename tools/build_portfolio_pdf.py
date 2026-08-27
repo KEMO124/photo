@@ -365,7 +365,7 @@ TOC = [("01","Sales Order Automation",3),("02","Quotation Automation",5),
 sheets = []
 
 def foot(label):
-    return ('<div class="foot"><span>Onyx Automation &middot; Selected Work</span>'
+    return ('<div class="foot"><span>Onyx Automate &middot; Selected Work</span>'
             '<span>%s</span><span class="pg">%%PG%%</span></div>') % label
 
 def sheet(cls, inner, label):
@@ -398,7 +398,7 @@ toc_html = "".join(
     '<span class="d"></span><span class="p">%02d</span></li>' % (n, t, p)
     for n, t, p in TOC)
 cover = """
-<div class="wordmark"><span class="glyph"></span>ONYX AUTOMATION</div>
+<div class="wordmark"><span class="glyph"></span>ONYX AUTOMATE</div>
 <div class="stamp">Operations &amp; AI systems</div>
 <div class="cover-rule"></div>
 <h1>We take the work that eats your week and hand it back <em>done.</em></h1>
@@ -419,7 +419,7 @@ sheets.append('<section class="sheet cover"><div class="pad">%s</div></section>'
 
 # --- 2. principles + process
 p2 = """
-<div class="phead"><span class="l">How we build</span><span class="r">Onyx Automation</span></div>
+<div class="phead"><span class="l">How we build</span><span class="r">Onyx Automate</span></div>
 <span class="sect-lab">Operating principles</span>
 <h2 class="big">Three rules we do not break, because they are what make automation safe to trust.</h2>
 <div class="prin">
@@ -520,7 +520,7 @@ CHIPS = ["ERP systems","QuickBooks","Xero","Sage","SQL &amp; Postgres","Google W
          "Microsoft 365","Shared inboxes","WhatsApp Business","Shopify","Customer portals &amp; EDI",
          "CRM platforms","Lab instruments","E-signature","Meta &amp; LinkedIn APIs","Spreadsheets"]
 close = """
-<div class="phead"><span class="l">Working with us</span><span class="r">Onyx Automation</span></div>
+<div class="phead"><span class="l">Working with us</span><span class="r">Onyx Automate</span></div>
 <span class="sect-lab">We integrate with what you already run</span>
 <h2 class="big" style="max-width:6.2in">Automation should slot into the tools your business is already built on — not replace them.</h2>
 <p class="intro">Replacing working software is expensive, disruptive and usually unnecessary. Every system in this document was built around what the client already used. In practice that has meant:</p>
@@ -529,9 +529,8 @@ close = """
   <h2>Tell us the task your team dreads on Monday morning.</h2>
   <p>We will map it, tell you honestly whether it is worth automating, and scope what it would take. That first conversation costs nothing and takes about thirty minutes.</p>
   <div class="contact">
-    <div><b>Email</b>hello@example.com</div>
-    <div><b>Web</b>onyxautomation.example</div>
-    <div><b>Phone</b>+0 000 000 0000</div>
+    <div><b>Email</b>sales@onyx-automate.com</div>
+    <div><b>Web</b>onyx-automate.com</div>
   </div>
 </div>
 <div class="ask">
@@ -543,7 +542,7 @@ close = """
   </ol>
 </div>
 <div class="endmark"><span class="glyph" style="width:9px;height:9px;background:var(--verd);transform:rotate(45deg);display:inline-block"></span>
-Onyx Automation &middot; Operations automation, AI systems, SaaS engineering</div>
+Onyx Automate &middot; Operations automation, AI systems, SaaS engineering</div>
 """ % ("".join("<span>%s</span>" % c for c in CHIPS))
 sheet("close", close, "Working with us")
 
@@ -557,7 +556,7 @@ for i, s in enumerate(sheets):
 
 import sys
 MEAS = MEASURE if os.environ.get("MEASURE","1")=="1" else ""
-doc = ("<title>Onyx Automation — Selected Work</title>\n<style>\n%s\n%s\n</style>\n%s\n%s"
+doc = ("<title>Onyx Automate — Selected Work</title>\n<style>\n%s\n%s\n</style>\n%s\n%s"
        % (FONTS, CSS, "\n".join(body), MEAS))
 
 out = os.environ.get('OUT','/tmp/claude-0/-home-user-photo/6fbe66dd-ce10-50e4-8a80-94a54949912d/scratchpad/print.html')

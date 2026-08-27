@@ -1,6 +1,6 @@
 # Portfolio PDF build
 
-`Onyx-Automation-Portfolio.pdf` (15pp, US Letter) is generated from the same
+`Onyx-Automate-Portfolio.pdf` (15pp, US Letter) is generated from the same
 content as `portfolio.html`, laid out for print with explicit pagination.
 
 ## Regenerating
@@ -16,7 +16,7 @@ content as `portfolio.html`, laid out for print with explicit pagination.
 
        python3 build_portfolio_pdf.py                       # writes print.html
        chrome --headless --no-pdf-header-footer \
-              --print-to-pdf=Onyx-Automation-Portfolio.pdf print.html
+              --print-to-pdf=Onyx-Automate-Portfolio.pdf print.html
 
 ## Checking the layout
 
