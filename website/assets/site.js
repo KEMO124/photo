@@ -99,4 +99,7 @@
     );
     sections.forEach(function (s) { so.observe(s); });
   }
+
+  /* Tell the head-script failsafe that everything wired up successfully. */
+  window.__onyxReady = true;
 })();

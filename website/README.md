@@ -37,16 +37,23 @@ Any static host works (GitHub Pages, Netlify, Vercel, Cloudflare Pages, S3).
 For GitHub Pages, either publish from `/docs` (rename this folder) or point a
 Pages workflow at `website/`.
 
-The only external dependency is Google Fonts (Archivo, Newsreader, IBM Plex
-Mono). Every face has a real fallback stack, so the page degrades cleanly if
-fonts are blocked. To go fully self-hosted, download the three families into
-`assets/fonts/` and replace the `<link>` in `index.html` with local
+The only external dependency is Google Fonts (Archivo, IBM Plex Sans, IBM
+Plex Mono). Every face has a real fallback stack, so the page degrades cleanly
+if fonts are blocked. To go fully self-hosted, download the three families
+into `assets/fonts/` and replace the `<link>` in `index.html` with local
 `@font-face` rules.
 
 ## Design notes
 
 - Single committed dark theme ("polished obsidian, machined brass"). Every
   colour is painted explicitly, so the page holds regardless of host theme.
+- Type is Archivo for headings, IBM Plex Sans for text, IBM Plex Mono for
+  data only (the log, metric columns, small labels) — no serif, no width-axis
+  stretching.
+- All text meets WCAG AA contrast against its actual background.
+- Content is not dependent on JavaScript: reveal animations are gated behind
+  a `js` class, and a head-script failsafe reveals everything if `site.js`
+  never finishes.
 - Colour tokens live in `:root` at the top of `site.css` — change the brand
   accent in one place (`--brass`).
 - Semantic colours are separate from the accent: `--patina` (passed / live),

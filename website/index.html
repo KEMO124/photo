@@ -11,8 +11,16 @@
 <meta property="og:type" content="website" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,300..600&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" />
 <link rel="stylesheet" href="assets/site.css" />
+<script>
+  document.documentElement.className += " js";
+  setTimeout(function () {
+    if (window.__onyxReady) return;
+    document.querySelectorAll(".rv").forEach(function (el) { el.classList.add("in"); });
+    document.querySelectorAll(".log__row").forEach(function (el) { el.classList.add("lit"); });
+  }, 3000);
+</script>
 </head>
 <body>
 
@@ -64,11 +72,6 @@
         <a class="btn" href="#contact">Start a conversation</a>
         <a class="btn btn--ghost" href="#services">See what we automate</a>
       </div>
-      <div class="hero__facts">
-        <span>Process Automation</span>
-        <span>AI Integration</span>
-        <span>Custom SaaS Engineering</span>
-      </div>
     </div>
 
     <figure class="log" aria-labelledby="logcap">
@@ -90,6 +93,12 @@
       </div>
       <figcaption class="log__foot" id="logcap">Illustrative &mdash; a day inside a running system</figcaption>
     </figure>
+
+    <div class="hero__facts">
+      <span>Process Automation</span>
+      <span>AI Integration</span>
+      <span>Custom SaaS Engineering</span>
+    </div>
   </div>
 </section>
 
@@ -472,7 +481,7 @@
 
             <!-- tenant boundary -->
             <rect x="8" y="8" width="884" height="212" fill="none" stroke="#2C323B" stroke-width="1" stroke-dasharray="3 4" />
-            <text x="22" y="28" fill="#565B63" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.6">TENANT ISOLATION BOUNDARY</text>
+            <text x="22" y="28" fill="#838994" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.6">TENANT ISOLATION BOUNDARY</text>
 
             <!-- stages -->
             <g font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="1.2">
@@ -526,7 +535,7 @@
               <rect x="712" y="176" width="158" height="30" fill="#0C0E11" stroke="#63A79F" />
               <text x="728" y="195" fill="#63A79F">FILING CLEARED</text>
 
-              <text x="8" y="248" fill="#565B63">CONFIGURABLE PER JURISDICTION &#183; RULES UPDATE WITHOUT REDEPLOY</text>
+              <text x="8" y="248" fill="#838994">CONFIGURABLE PER JURISDICTION &#183; RULES UPDATE WITHOUT REDEPLOY</text>
             </g>
           </svg>
           <figcaption>Processing pipeline — each tenant's records stay isolated end to end</figcaption>
