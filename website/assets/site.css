@@ -212,7 +212,6 @@ figure,dl,dd,blockquote,figcaption{ margin:0; }
   }
   .nav__links[hidden]{ display:none; }
   .nav__links a{ padding:0.85rem 0; border-bottom:1px solid var(--seam); }
-  .nav__links .btn{ margin-top:1rem; justify-content:center; border-bottom:1px solid var(--brass); }
   .nav__toggle{ display:block; }
 }
 
@@ -895,11 +894,6 @@ figure,dl,dd,blockquote,figcaption{ margin:0; }
   }
   .log__body{ font-size:0.64rem; overflow-x:visible; }
 }
-
-/* The nav CTA is a button first: `.nav__links a` (0,1,1) would otherwise
-   outrank `.btn` (0,1,0) and strip its colour. */
-.nav__links a.btn{ color:var(--ink); border-bottom-color:var(--brass); }
-.nav__links a.btn:hover{ color:var(--ink); border-bottom-color:var(--brass-hi); }
 
 /* Anchor targets must clear the sticky header when jumped to. */
 section[id], main[id]{ scroll-margin-top:86px; }

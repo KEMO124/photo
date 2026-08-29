@@ -65,8 +65,9 @@ into `assets/fonts/` and replace the `<link>` in `index.html` with local
 
 ## Before publishing — please review
 
-- **Contact details** — `sales@onyx-automate.com` and `+971 58 894 1825`
-  appear in the hero CTA, contact section and footer.
+- **Contact details** — `sales@onyx-automate.com` is the only contact route
+  on the page (contact section field + "Email us" button). There is no phone
+  number by request.
 - **The ASHKAL FZE case study** names the client. Confirm you have their
   permission to reference them publicly, and check the engagement wording.
 - **Metrics** are quoted from the ASHKAL report as written (30–45 min daily,
